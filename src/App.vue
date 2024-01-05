@@ -1,26 +1,23 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <LoginWindow :user="user" v-if="!user.username" />
+  <ChatWindow :user="user" v-else />
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+import LoginWindow from './components/LoginWindow.vue'
+import ChatWindow from './components/ChatWindow.vue'
+import './assets/styles/main.css'
+import { reactive, provide } from 'vue';
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+const user = reactive({
+  id: null,
+  username: '',
+  status: '',
+});
+
+provide('user', user);
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
