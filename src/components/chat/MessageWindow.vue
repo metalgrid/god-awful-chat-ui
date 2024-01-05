@@ -21,7 +21,7 @@
       </div>
     </div>
   </div>
-  <div class="w-2/5 border-l-2 px-5">
+  <div class="xs:hidden sm:hidden lg:block w-2/5 border-l-2 px-5">
     <div class="flex flex-col">
       <div class="font-semibold text-center text-xl py-4">
         Chat highlights
@@ -57,6 +57,7 @@ const formatDate = (date) => {
 
 
 const sendMessage = () => {
+  if (!text.trim()) return;
   messages.value.push({
     id: messages.value.length + 1,
     text: text,

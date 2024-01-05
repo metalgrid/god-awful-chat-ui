@@ -1,6 +1,7 @@
 <template>
         <div v-for="user in users" :key="user.id" 
-          class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200"
+          class="xs:hidden sm:hidden lg:flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200"
+          @click="kys(user)"
         >
 
       <div class="w-1/4">
@@ -16,6 +17,7 @@
             <!-- <span class="text-gray-500">Pick me at 9:00 Am</span> -->
           </div>
         </div>
+        <!--
         <div class="flex flex-row py-4 px-2 items-center border-b-2">
           <div class="w-1/4">
             <img
@@ -83,7 +85,7 @@
             <div class="text-lg font-semibold">Javascript Indonesia</div>
             <span class="text-gray-500">Evan : some one can fix this</span>
           </div>
-        </div>
+        </div>-->
 </template>
 <script setup>
 const users = [
@@ -103,6 +105,10 @@ const users = [
         status: "dnd"
     }
 ]
+
+const kys = (user) => {
+  alert(`Chatting with ${user.username}`);
+}
 
 const getInitials = (fullName) => {
   const allNames = fullName.trim().split(' ');
