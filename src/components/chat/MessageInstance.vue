@@ -1,7 +1,7 @@
 <template>
   <div :class="props.side == 'mine' ? 'right' : 'left'">
     <div :class="props.side">
-      <p v-html="renderLinks(props.message.text)"></p>
+      <p v-html="parseMessage(props.message)"></p>
     </div>
     <img
       src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
@@ -20,36 +20,63 @@ const props = defineProps({
   side: {
     type: String,
     required: true,
-  }
+  },
 });
 
-const emits = defineEmits(['highlight']);
+const emits = defineEmits(["highlight"]);
 
+const parseMessage = (message) => {
+  // Check if the message is an image
+  if (message?.type == "image") {
+    return renderImage(message);
+  }
+  return renderLinks(message);
+};
+
+const renderImage = (message) => {
+  if (message?.type == "image") {
+    const img = `<img src="${message.text}" class="w-64" />`;
+    emits("highlight", {
+      timestamp: new Date(),
+      type: "image",
+      highlight: img,
+      sender: props.message.sender,
+    });
+    return img;
+  }
+};
 
 const renderLinks = (message) => {
+  console.log('RenderLinks', message);
   // Use a regular expression to match and replace links in the text
   const linkRegex = /(https?:\/\/[^\s]+)/g;
+  let text = String(message.text);
 
-  let links = message.match(linkRegex);
+  const links = text.match(linkRegex);
+  console.log(links)
 
   links?.forEach((link) => {
+    console.log('link', link)
     const ahref = `<a class="font-medium text-blue-600 dark:text-blue-700 underline" href="${link}" target="_blank">${link}</a>`;
-    emits('highlight', {timestamp: new Date(), highlight: ahref, sender: props.message.sender });
-    message = message.replace(link, ahref);
+    emits("highlight", {
+      timestamp: new Date(),
+      type: "link",
+      highlight: ahref,
+      sender: props.message.sender,
+    });
+    text = text.replace(link, ahref);
   });
 
-  return message;
-}
-
+  return text;
+};
 </script>
 <style scoped>
-
 .right {
-@apply justify-end flex mb-4;
+  @apply justify-end flex mb-4;
 }
 
 .left {
-@apply justify-start flex mb-4;
+  @apply justify-start flex mb-4;
 }
 
 .mine {

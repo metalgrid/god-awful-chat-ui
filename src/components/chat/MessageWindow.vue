@@ -10,7 +10,7 @@
       ></message>
     </div>
     <div class="flex py-5 relative">
-      <input v-model="text" class="w-full bg-gray-200 py-2 px-3 rounded-xl" type="text" />
+      <input @keyup.enter="sendMessage" @paste="handlePaste" v-model="text" class="w-full bg-gray-200 py-2 px-3 rounded-xl" type="text" />
       <div class="flex justify-end self-center absolute right-1">
         <button
           @click.prevent="sendMessage"
@@ -55,6 +55,27 @@ const formatDate = (date) => {
   return formattedDateTime;
 };
 
+const handlePaste = (ev) => {
+  const items = (ev.clipboardData || ev.originalEvent.clipboardData).items;
+
+  for (const item of items) {
+    const type = item.type;
+    if (type.indexOf("image") !== -1) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = event.target.result;
+        messages.value.push({
+          id: messages.value.length + 1,
+          text: img,
+          type: "image",
+          sender: user.id,
+        });
+      };
+      reader.readAsDataURL(blob);
+    }
+  }
+}
 
 const sendMessage = () => {
   if (!text.trim()) return;
