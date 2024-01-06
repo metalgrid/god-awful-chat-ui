@@ -4,20 +4,18 @@
 </template>
 
 <script setup>
-import LoginWindow from './components/LoginWindow.vue'
-import ChatWindow from './components/ChatWindow.vue'
-import './assets/styles/main.css'
-import { reactive, provide } from 'vue';
+import LoginWindow from "./components/LoginWindow.vue";
+import ChatWindow from "./components/ChatWindow.vue";
+import "./assets/styles/main.css";
+import { reactive, provide } from "vue";
 
 const user = reactive({
   id: null,
-  username: '',
-  status: '',
+  username: "",
+  status: "",
 });
 
-provide('user', user);
+provide("user", user);
 </script>
 
-<style>
-
-</style>
+<style></style>

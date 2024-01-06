@@ -1,8 +1,8 @@
 <template>
-<!-- component -->
-<!-- This is an example component -->
-<div class="container mx-auto shadow-lg rounded-lg">
-        <!-- headaer -->
+  <!-- component -->
+  <!-- This is an example component -->
+  <div class="container mx-auto shadow-lg rounded-lg">
+    <!-- headaer -->
     <div class="px-5 py-5 flex justify-between items-center bg-white border-b-2">
       <div class="font-semibold text-2xl">DSChat</div>
       <div class="w-1/2">
@@ -18,8 +18,11 @@
         @click.prevent="setStatus()"
         class="h-12 w-12 p-2 bg-yellow-500 rounded-full relative text-white font-semibold flex items-center justify-center"
       >
-        {{getInitials()}}
-        <div :class="status()" class="h-3 w-3 rounded-full absolute bottom-0 left-0"></div>
+        {{ getInitials() }}
+        <div
+          :class="status()"
+          class="h-3 w-3 rounded-full absolute bottom-0 left-0"
+        ></div>
       </div>
     </div>
     <!-- end header -->
@@ -44,58 +47,55 @@
       <!-- message -->
       <message-window></message-window>
       <!-- end message -->
-      
-      </div>
     </div>
+  </div>
 </template>
 <script setup>
-import { provide } from 'vue';
-import UserList from './chat/UserList.vue';
-import MessageWindow from './chat/MessageWindow.vue';
-import { inject } from 'vue';
-const user = inject('user');
+import { provide } from "vue";
+import UserList from "./chat/UserList.vue";
+import MessageWindow from "./chat/MessageWindow.vue";
+import { inject } from "vue";
+const user = inject("user");
 
-provide('user', user);
+provide("user", user);
 
 const getInitials = () => {
-    const fullName = user.username;
-  const allNames = fullName.trim().split(' ');
+  const fullName = user.username;
+  const allNames = fullName.trim().split(" ");
   const initials = allNames.reduce((acc, curr, index) => {
-    if(index === 0 || index === allNames.length - 1){
+    if (index === 0 || index === allNames.length - 1) {
       acc = `${acc}${curr.charAt(0).toUpperCase()}`;
     }
     return acc;
-  }, '');
+  }, "");
   return initials;
-}
+};
 
 const status = () => {
-    switch(user.status){
-        case 'online':
-            return 'bg-green-500';
-        case 'offline':
-            return 'bg-gray-500';
-        case 'dnd':
-            return 'bg-red-500';
-        default:
-            return 'bg-yellow-500';
-    }
-}
+  switch (user.status) {
+    case "online":
+      return "bg-green-500";
+    case "offline":
+      return "bg-gray-500";
+    case "dnd":
+      return "bg-red-500";
+    default:
+      return "bg-yellow-500";
+  }
+};
 
 const setStatus = () => {
-    switch(user.status){
-        case 'online':
-            user.status = 'dnd';
-            break;
-        case 'dnd':
-            user.status = 'offline';
-            break;
-        default:
-            user.status = 'online';
-            break;
-    }
-}
-
+  switch (user.status) {
+    case "online":
+      user.status = "dnd";
+      break;
+    case "dnd":
+      user.status = "offline";
+      break;
+    default:
+      user.status = "online";
+      break;
+  }
+};
 </script>
-<style scoped>
-</style>
+<style scoped></style>

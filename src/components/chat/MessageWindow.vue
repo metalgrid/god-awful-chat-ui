@@ -10,7 +10,13 @@
       ></message>
     </div>
     <div class="flex py-5 relative">
-      <input @keyup.enter="sendMessage" @paste="handlePaste" v-model="text" class="w-full bg-gray-200 py-2 px-3 rounded-xl" type="text" />
+      <input
+        @keyup.enter="sendMessage"
+        @paste="handlePaste"
+        v-model="text"
+        class="w-full bg-gray-200 py-2 px-3 rounded-xl"
+        type="text"
+      />
       <div class="flex justify-end self-center absolute right-1">
         <button
           @click.prevent="sendMessage"
@@ -30,7 +36,9 @@
         </p>
       </div>
       <div v-for="hl in highlights" :key="hl.timestamp">
-        <div class="font-semibold py-4">{{hl.sender}} at {{ formatDate(hl.timestamp) }}</div>
+        <div class="font-semibold py-4">
+          {{ hl.sender }} at {{ formatDate(hl.timestamp) }}
+        </div>
         <div class="font-light">
           <span v-html="hl.highlight"></span>
         </div>
@@ -47,9 +55,14 @@ const user = inject("user");
 let text = "";
 
 const formatDate = (date) => {
-
   // Format the date and time in a short format
-  const options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  const options = {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  };
   const formattedDateTime = date.toLocaleString(undefined, options);
 
   return formattedDateTime;
@@ -75,7 +88,7 @@ const handlePaste = (ev) => {
       reader.readAsDataURL(blob);
     }
   }
-}
+};
 
 const sendMessage = () => {
   if (!text.trim()) return;
@@ -84,7 +97,6 @@ const sendMessage = () => {
     text: text,
     sender: user.id,
   });
-  console.log(messages);
   text = "";
 };
 
