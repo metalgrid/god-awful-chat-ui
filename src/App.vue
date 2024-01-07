@@ -1,21 +1,18 @@
 <template>
-  <LoginWindow :user="user" v-if="!user.username" />
-  <ChatWindow :user="user" v-else />
+  <LoginRegister v-if="!auth?.user" />
+  <ChatWindow v-else :user="auth.user" />
 </template>
 
 <script setup>
-import LoginWindow from "./components/LoginWindow.vue";
+// import LoginWindow from "./components/LoginWindow.vue";
+import LoginRegister from "./components/LoginRegister.vue";
 import ChatWindow from "./components/ChatWindow.vue";
 import "./assets/styles/main.css";
 import { reactive, provide } from "vue";
 
-const user = reactive({
-  id: null,
-  username: "",
-  status: "",
-});
+const auth = reactive({});
 
-provide("user", user);
+provide("auth", auth);
 </script>
 
 <style></style>

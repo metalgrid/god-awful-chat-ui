@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@stomp/stompjs':
+    specifier: ^7.0.0
+    version: 7.0.0
   core-js:
     specifier: ^3.8.3
     version: 3.35.0
@@ -1515,6 +1518,10 @@ packages:
   /@soda/get-current-script@1.0.2:
     resolution: {integrity: sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==}
     dev: true
+
+  /@stomp/stompjs@7.0.0:
+    resolution: {integrity: sha512-fGdq4wPDnSV/KyOsjq4P+zLc8MFWC3lMmP5FBgLWKPJTYcuCbAIrnRGjB7q2jHZdYCOD5vxLuFoKIYLy5/u8Pw==}
+    dev: false
 
   /@trysound/sax@0.2.0:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}

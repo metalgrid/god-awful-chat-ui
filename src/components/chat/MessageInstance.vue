@@ -47,16 +47,13 @@ const renderImage = (message) => {
 };
 
 const renderLinks = (message) => {
-  console.log("RenderLinks", message);
   // Use a regular expression to match and replace links in the text
   const linkRegex = /(https?:\/\/[^\s]+)/g;
   let text = String(message.text);
 
   const links = text.match(linkRegex);
-  console.log(links);
 
   links?.forEach((link) => {
-    console.log("link", link);
     const ahref = `<a class="font-medium text-blue-600 dark:text-blue-700 underline" href="${link}" target="_blank">${link}</a>`;
     emits("highlight", {
       timestamp: new Date(),

@@ -39,6 +39,9 @@
           />
         </div>
         <!-- end search compt -->
+        <!-- chat rooms list -->
+        <room-list></room-list>
+        <!-- end chat rooms list -->
         <!-- user list -->
         <user-list></user-list>
         <!-- end user list -->
@@ -51,16 +54,18 @@
   </div>
 </template>
 <script setup>
-import { provide } from "vue";
+import { provide, defineProps } from "vue";
 import UserList from "./chat/UserList.vue";
+import RoomList from "./chat/RoomList.vue";
 import MessageWindow from "./chat/MessageWindow.vue";
-import { inject } from "vue";
-const user = inject("user");
+import {Stomp} from "@stomp/stompjs";
 
-provide("user", user);
+const props = defineProps(["user"]);
+
+provide("user", props.user);
 
 const getInitials = () => {
-  const fullName = user.username;
+  const fullName = props.user.username;
   const allNames = fullName.trim().split(" ");
   const initials = allNames.reduce((acc, curr, index) => {
     if (index === 0 || index === allNames.length - 1) {
@@ -72,7 +77,7 @@ const getInitials = () => {
 };
 
 const status = () => {
-  switch (user.status) {
+  switch (props.user.status) {
     case "online":
       return "bg-green-500";
     case "offline":
@@ -85,17 +90,28 @@ const status = () => {
 };
 
 const setStatus = () => {
-  switch (user.status) {
-    case "online":
-      user.status = "dnd";
-      break;
-    case "dnd":
-      user.status = "offline";
-      break;
-    default:
-      user.status = "online";
-      break;
-  }
+  return false;
+  // switch (user.status) {
+  //   case "online":
+  //     user.status = "dnd";
+  //     break;
+  //   case "dnd":
+  //     user.status = "offline";
+  //     break;
+  //   default:
+  //     user.status = "online";
+  //     break;
+  // }
 };
+
+const springSucksAss = Stomp.client("ws://192.168.100.69:8080/ws");
+
+springSucksAss.connect({}, () => {
+  springSucksAss.subscribe("/chatroom/public", (msg) => {
+    console.log(msg);
+  });
+}, (e) => { console.log("error", e)});
+
+
 </script>
 <style scoped></style>

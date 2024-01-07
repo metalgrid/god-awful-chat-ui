@@ -2,8 +2,8 @@
   <div
     v-for="user in users"
     :key="user.id"
-    class="xs:hidden sm:hidden lg:flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200"
-    @click="kys(user)"
+    class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200"
+    @click="openChat(user)"
   >
     <div class="w-1/4">
       <div
@@ -11,7 +11,7 @@
       >
         {{ getInitials(user.username) }}
         <div
-          :class="status(user.status)"
+          :class="status(user?.status)"
           class="h-3 w-3 rounded-full absolute bottom-0 right-0"
         ></div>
       </div>
@@ -92,26 +92,63 @@
         </div>-->
 </template>
 <script setup>
-const users = [
-  {
-    id: 1,
-    username: "Sam",
-    status: "online",
-  },
-  {
-    id: 2,
-    username: "Lusi",
-    status: "offline",
-  },
-  {
-    id: 3,
-    username: "Evan",
-    status: "dnd",
-  },
-];
+import { inject, ref } from "vue";
 
-const kys = (user) => {
-  alert(`Chatting with ${user.username}`);
+let users = ref([]);
+const auth = inject("auth");
+
+const getUsers = async () => {
+  const res = await fetch("http://192.168.100.69:8080/api/v1/users", {
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+    },
+  });
+
+  let data;
+  window.users = users;
+
+  switch (res.status) {
+    case 200:
+      data = await res.json();
+      users.value = data?.content;
+      break;
+    case 401:
+      alert("Unauthorized");
+      break;
+    default:
+      alert("Something went wrong");
+      break;
+  }
+};
+
+getUsers();
+
+
+
+const openChat = async (user) => {
+  const payload = {
+    participants: [user.username],
+  }
+  const res = await fetch("http://192.168.100.69:8080/api/v1/conversations", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  switch (res.status) {
+    case 200:
+      console.log(await res.json());
+      break;
+    case 401:
+      alert("Unauthorized");
+      break;
+    default:
+      alert("Something went wrong");
+      break;
+  }
 };
 
 const getInitials = (fullName) => {
