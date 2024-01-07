@@ -24,7 +24,7 @@ const auth = inject("auth");
 const rooms = ref([]);
 
 const getRooms = async () => {
-    const res = await fetch("http://192.168.100.69:8080/api/v1/conversations/public", {
+    const res = await fetch("http://127.0.0.1:8080/api/v1/conversations/public", {
         headers: {
             Authorization: `Bearer ${auth.token}`,
         },

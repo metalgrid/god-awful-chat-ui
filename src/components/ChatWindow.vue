@@ -104,10 +104,23 @@ const setStatus = () => {
   // }
 };
 
-const springSucksAss = Stomp.client("ws://192.168.100.69:8080/ws");
+const stompClient = Stomp.client("ws://127.0.0.1:8080/ws-native");
 
-springSucksAss.connect({}, () => {
-  springSucksAss.subscribe("/chatroom/public", (msg) => {
+stompClient.connect({}, () => {
+  stompClient.subscribe("/chatroom/public", (msg) => {
+    switch (msg.command) {
+      case "MESSAGE":
+        console.log(msg);
+        break;
+      case "JOIN":
+        console.log(msg);
+        break;
+      case "LEAVE":
+        console.log(msg);
+        break;
+      default:
+        break;
+    }
     console.log(msg);
   });
 }, (e) => { console.log("error", e)});

@@ -161,7 +161,7 @@ const validate = () => {
 };
 
 const doLogin = async () => {
-  const res = await fetch("http://192.168.100.69:8080/api/v1/auth", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/auth", {
     mode: "cors",
     method: "POST",
     headers: {
@@ -193,7 +193,7 @@ const doLogin = async () => {
 };
 
 const doRegister = async () => {
-  const res = await fetch("http://192.168.100.69:8080/api/v1/users", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/users", {
     mode: "cors",
     method: "POST",
     headers: {
@@ -203,16 +203,22 @@ const doRegister = async () => {
   });
 
   try {
-    const data = await res.json();
+    let data;
     switch (res.status) {
       case 200:
+        login.username = account.username;
+        login.password = account.password;
+        isLoginPage.value = true;
+        doLogin();
         errorRegister.value = "";
         break;
       case 400:
-        errorRegister.value = `Registration failed: ${data.message}`;
+        data = await res.json();
+        errorRegister.value = `Registration failed: ${data?.messages || "Unknown error"}`;
         break;
       default:
-        errorRegister.value = `Registration failed: ${data?.message || "Unknown error"}`;
+        data = await res.json();
+        errorRegister.value = `Registration failed: ${data?.messages || "Unknown error"}`;
         break;
     }
   } catch (err) {

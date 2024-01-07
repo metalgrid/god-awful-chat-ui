@@ -98,7 +98,7 @@ let users = ref([]);
 const auth = inject("auth");
 
 const getUsers = async () => {
-  const res = await fetch("http://192.168.100.69:8080/api/v1/users", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/users", {
     headers: {
       Authorization: `Bearer ${auth.token}`,
     },
@@ -129,7 +129,7 @@ const openChat = async (user) => {
   const payload = {
     participants: [user.username],
   }
-  const res = await fetch("http://192.168.100.69:8080/api/v1/conversations", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/conversations", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${auth.token}`,
