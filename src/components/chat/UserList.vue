@@ -1,5 +1,5 @@
 <template>
-  <user-component @click="$emit('click', {type: 'private', ...user})" v-for="user in users" :key="user.id" :user="user"></user-component>
+  <user-component @click="emits('click', {type: 'private', ...user})" v-for="user in users" :key="user.id" :user="user"></user-component>
   
   <!--
         <div class="flex flex-row py-4 px-2 items-center border-b-2">
@@ -73,10 +73,12 @@
 </template>
 <script setup>
 import UserComponent from "../UserComponent.vue";
-import { inject } from "vue";
+import { inject, defineEmits } from "vue";
 
 const users = inject("users");
 const auth = inject("auth");
+
+const emits = defineEmits(["click"]);
 
 const getUsers = async () => {
   const res = await fetch("http://127.0.0.1:8080/api/v1/users", {

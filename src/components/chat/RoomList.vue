@@ -1,7 +1,7 @@
 <template>
     <div
     v-for="room in rooms"
-    @click="$emit('click', {type: 'room', ...room})"
+    @click="emits('click', {type: 'room', ...room})"
     :key="room.id"
     class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200 hover:cursor-pointer"
   >
@@ -18,7 +18,9 @@
   </div>
 </template>
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, defineEmits } from "vue";
+
+const emits = defineEmits(["click"]);
 
 const auth = inject("auth");
 

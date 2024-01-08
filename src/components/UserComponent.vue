@@ -52,7 +52,6 @@ const twColors = [
   "yellow",
   "gray",
   "blue",
-  "orange",
   "red",
   "green"
 ];
@@ -61,8 +60,7 @@ const getColor = (string) => {
 
   const h = shash(string);
   const index = Math.abs(h) % twColors.length;
-  console.log(string, index);
-  return twColors[index];
+  return twColors[index-1];
 }
 
 const getInitials = (fullName) => {

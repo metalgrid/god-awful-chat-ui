@@ -3,7 +3,7 @@
     <div class="flex flex-col mt-5">
       <message
         @highlight="addHighlight"
-        v-for="message in props.messages"
+        v-for="message in props.conversation?.messages"
         :key="message.id"
         :side="user.id == message.user.id ? 'mine' : 'others'"
         :message="message"
@@ -51,11 +51,11 @@
 import { ref, inject, defineProps } from "vue";
 import SendIcon from "../icons/SendIcon.vue";
 import Message from "./MessageInstance.vue";
-import { UserComponent } from "../UserComponent.vue";
+import UserComponent from "../UserComponent.vue";
 
 const props = defineProps({
-  messages: {
-    type: Array,
+  conversation: {
+    type: Object,
     required: true,
   },
 });

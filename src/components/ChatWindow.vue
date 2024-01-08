@@ -14,16 +14,7 @@
           class="rounded-2xl bg-gray-100 py-3 px-5 w-full"
         />
       </div>
-      <div
-        @click.prevent="setStatus()"
-        class="h-12 w-12 p-2 bg-yellow-500 rounded-full relative text-white font-semibold flex items-center justify-center"
-      >
-        {{ getInitials() }}
-        <div
-          :class="status()"
-          class="h-3 w-3 rounded-full absolute bottom-0 left-0"
-        ></div>
-      </div>
+      <user-component :user="auth.user"></user-component>
     </div>
     <!-- end header -->
     <!-- Chatting -->
@@ -48,13 +39,14 @@
       </div>
       <!-- end chat list -->
       <!-- message -->
-      <message-window :messages="messages"></message-window>
+      <message-window :conversation="conversations[convId]"></message-window>
       <!-- end message -->
     </div>
   </div>
 </template>
 <script setup>
 import { provide, inject, ref, defineProps } from "vue";
+import UserComponent from "./UserComponent.vue";
 import UserList from "./chat/UserList.vue";
 import RoomList from "./chat/RoomList.vue";
 import MessageWindow from "./chat/MessageWindow.vue";
@@ -62,70 +54,40 @@ import { Stomp } from "@stomp/stompjs";
 
 const auth = inject("auth");
 const props = defineProps(["user"]);
-const messages = ref([]);
 const users = ref([]);
+const convId = ref(0);
 
+const conversations = ref({});
+
+provide("convId", convId);
 provide("user", props.user);
 provide("users", users);
 
-const getInitials = () => {
-  const fullName = props.user.username;
-  const allNames = fullName.trim().split(" ");
-  const initials = allNames.reduce((acc, curr, index) => {
-    if (index === 0 || index === allNames.length - 1) {
-      acc = `${acc}${curr.charAt(0).toUpperCase()}`;
-    }
-    return acc;
-  }, "");
-  return initials;
-};
-
-const status = () => {
-  switch (props.user.status) {
-    case "online":
-      return "bg-green-500";
-    case "offline":
-      return "bg-gray-500";
-    case "dnd":
-      return "bg-red-500";
-    default:
-      return "bg-yellow-500";
-  }
-};
-
 const openChat = async (chat) => {
+  console.log("Opening chat", chat);
   let res;
   switch (chat.type) {
     case "room":
       await getMessages(chat.id);
+      convId.value = chat.id;
       break;
     case "private":
-      res = await fetch(`http://127.0.0.1:8080/api/v1/conversations/participants/${chat.username}/messages`, {headers: {Authorization: `Bearer ${auth.token}`}});
+      res = await fetch(
+        `http://127.0.0.1:8080/api/v1/conversations/participants/${chat.username}/messages`,
+        { headers: { Authorization: `Bearer ${auth.token}` } }
+      );
       if (res.status !== 200) {
         console.error("Fukup");
       }
       res = await res.json();
       if (res?.exists) {
-        messages.value = res.messages
+        await getMessages(res.id);
+        convId.value = res.id;
       } else {
-        newChat(chat)
+        newChat(chat);
       }
+      break;
   }
-}
-
-const setStatus = () => {
-  return false;
-  // switch (user.status) {
-  //   case "online":
-  //     user.status = "dnd";
-  //     break;
-  //   case "dnd":
-  //     user.status = "offline";
-  //     break;
-  //   default:
-  //     user.status = "online";
-  //     break;
-  // }
 };
 
 const getMessages = async (convId) => {
@@ -143,7 +105,7 @@ const getMessages = async (convId) => {
 
   if (res.status === 200) {
     data = await res.json();
-    messages.value = data.messages;
+    conversations.value[convId] = data;
   } else {
     console.error("Could not retrieve messages: ", res.status);
   }
@@ -155,6 +117,10 @@ stompClient.connect(
   {},
   () => {
     let data;
+    stompClient.subscribe(`/user/${auth.user.username}/private`, (msg) => {
+      console.log("private message:", msg);
+    });
+
     stompClient.subscribe("/chatroom/public", (msg) => {
       switch (msg.command) {
         case "MESSAGE":
@@ -177,6 +143,16 @@ stompClient.connect(
     console.log("error", e);
   }
 );
+
+// const sendMessage = async (text) => {
+//   const payload = {
+//     senderName: auth.user.username,
+//     receiverName:
+//     conversationId: convId,
+//     message: text
+//   }
+
+// }
 
 const newChat = async (user) => {
   const payload = {
@@ -203,6 +179,5 @@ const newChat = async (user) => {
       break;
   }
 };
-
 </script>
 <style scoped></style>
