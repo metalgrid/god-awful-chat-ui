@@ -3,9 +3,9 @@
     <div class="flex flex-col mt-5">
       <message
         @highlight="addHighlight"
-        :side="user.id == message.sender ? 'mine' : 'others'"
-        v-for="message in messages"
+        v-for="message in props.messages"
         :key="message.id"
+        :side="user.id == message.user.id ? 'mine' : 'others'"
         :message="message"
       ></message>
     </div>
@@ -37,6 +37,7 @@
       </div>
       <div v-for="hl in highlights" :key="hl.timestamp">
         <div class="font-semibold py-4">
+          <user-component :id="hl.sender"></user-component>
           {{ hl.sender }} at {{ formatDate(hl.timestamp) }}
         </div>
         <div class="font-light">
@@ -47,9 +48,17 @@
   </div>
 </template>
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, defineProps } from "vue";
 import SendIcon from "../icons/SendIcon.vue";
 import Message from "./MessageInstance.vue";
+import { UserComponent } from "../UserComponent.vue";
+
+const props = defineProps({
+  messages: {
+    type: Array,
+    required: true,
+  },
+});
 
 const user = inject("user");
 let text = "";
@@ -78,12 +87,13 @@ const handlePaste = (ev) => {
       const reader = new FileReader();
       reader.onload = function (event) {
         const img = event.target.result;
-        messages.value.push({
-          id: messages.value.length + 1,
-          text: img,
-          type: "image",
-          sender: user.id,
-        });
+        console.log(img);
+        // messages.value.push({
+        //   id: messages.value.length + 1,
+        //   text: img,
+        //   type: "image",
+        //   sender: user.id,
+        // });
       };
       reader.readAsDataURL(blob);
     }
@@ -91,27 +101,15 @@ const handlePaste = (ev) => {
 };
 
 const sendMessage = () => {
-  if (!text.trim()) return;
-  messages.value.push({
-    id: messages.value.length + 1,
-    text: text,
-    sender: user.id,
-  });
-  text = "";
+  return;
+  // if (!text.trim()) return;
+  // messages.value.push({
+  //   id: messages.value.length + 1,
+  //   text: text,
+  //   sender: user.id,
+  // });
+  // text = "";
 };
-
-const messages = ref([
-  {
-    id: 1,
-    text: "Hello world",
-    sender: "YTph",
-  },
-  {
-    id: 2,
-    text: "Howdy!",
-    sender: "Yjpi",
-  },
-]);
 
 const highlights = ref([]);
 

@@ -1,9 +1,16 @@
 <template>
   <div :class="props.side == 'mine' ? 'right' : 'left'">
+    <img
+      v-if="props.side == 'others'"
+      src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
+      class="object-cover h-8 w-8 rounded-full"
+      alt=""
+    />
     <div :class="props.side">
       <p v-html="parseMessage(props.message)"></p>
     </div>
     <img
+      v-if="props.side == 'mine'"
       src="https://source.unsplash.com/vpOeXr5wmR4/600x600"
       class="object-cover h-8 w-8 rounded-full"
       alt=""
@@ -35,12 +42,12 @@ const parseMessage = (message) => {
 
 const renderImage = (message) => {
   if (message?.type == "image") {
-    const img = `<img src="${message.text}" class="w-64" />`;
+    const img = `<img src="${message.message}" class="w-64" />`;
     emits("highlight", {
       timestamp: new Date(),
       type: "image",
       highlight: img,
-      sender: props.message.sender,
+      sender: props.message.user.id,
     });
     return img;
   }
@@ -49,7 +56,7 @@ const renderImage = (message) => {
 const renderLinks = (message) => {
   // Use a regular expression to match and replace links in the text
   const linkRegex = /(https?:\/\/[^\s]+)/g;
-  let text = String(message.text);
+  let text = String(message.message);
 
   const links = text.match(linkRegex);
 
@@ -59,7 +66,7 @@ const renderLinks = (message) => {
       timestamp: new Date(),
       type: "link",
       highlight: ahref,
-      sender: props.message.sender,
+      sender: props.message.user.id,
     });
     text = text.replace(link, ahref);
   });

@@ -48,21 +48,25 @@
       </div>
       <!-- end chat list -->
       <!-- message -->
-      <message-window></message-window>
+      <message-window :messages="messages"></message-window>
       <!-- end message -->
     </div>
   </div>
 </template>
 <script setup>
-import { provide, defineProps } from "vue";
+import { provide, inject, ref, defineProps } from "vue";
 import UserList from "./chat/UserList.vue";
 import RoomList from "./chat/RoomList.vue";
 import MessageWindow from "./chat/MessageWindow.vue";
 import {Stomp} from "@stomp/stompjs";
 
+const auth = inject('auth');
 const props = defineProps(["user"]);
+const messages = ref([]);
+const users = ref([]);
 
 provide("user", props.user);
+provide("users", users);
 
 const getInitials = () => {
   const fullName = props.user.username;
@@ -104,13 +108,33 @@ const setStatus = () => {
   // }
 };
 
+const getMessages = async (convId) => {
+  let data;
+  const res = await fetch(`http://127.0.0.1:8080/api/v1/conversations/${convId}/messages`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth.token}`,
+    },
+  });
+
+  if (res.status === 200) {
+    data = await res.json();
+    messages.value = data.messages;
+  } else {
+    console.error("Could not retrieve messages: ", res.status);
+  }
+}
+
 const stompClient = Stomp.client("ws://127.0.0.1:8080/ws-native");
 
 stompClient.connect({}, () => {
+  let data;
   stompClient.subscribe("/chatroom/public", (msg) => {
     switch (msg.command) {
       case "MESSAGE":
-        console.log(msg);
+        data = JSON.parse(msg.body);
+        getMessages(data.conversationId);
         break;
       case "JOIN":
         console.log(msg);
@@ -124,7 +148,5 @@ stompClient.connect({}, () => {
     console.log(msg);
   });
 }, (e) => { console.log("error", e)});
-
-
 </script>
 <style scoped></style>

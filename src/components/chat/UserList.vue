@@ -1,4 +1,5 @@
 <template>
+  <user-component v-for="user in users.value" :key="user.id" :id="user.id"></user-component>
   <div
     v-for="user in users"
     :key="user.id"
@@ -92,9 +93,10 @@
         </div>-->
 </template>
 <script setup>
-import { inject, ref } from "vue";
+import UserComponent from "../UserComponent.vue";
+import { inject} from "vue";
 
-let users = ref([]);
+const users = inject("users");
 const auth = inject("auth");
 
 const getUsers = async () => {
@@ -105,7 +107,6 @@ const getUsers = async () => {
   });
 
   let data;
-  window.users = users;
 
   switch (res.status) {
     case 200:
