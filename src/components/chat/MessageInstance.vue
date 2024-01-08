@@ -47,7 +47,7 @@ const renderImage = (message) => {
       timestamp: new Date(),
       type: "image",
       highlight: img,
-      sender: props.message.user.id,
+      sender: props.message.user,
     });
     return img;
   }
@@ -66,7 +66,7 @@ const renderLinks = (message) => {
       timestamp: new Date(),
       type: "link",
       highlight: ahref,
-      sender: props.message.user.id,
+      sender: props.message.user,
     });
     text = text.replace(link, ahref);
   });

@@ -114,6 +114,7 @@ const sendMessage = () => {
 const highlights = ref([]);
 
 const addHighlight = (link) => {
+  // console.log(link);
   highlights.value.push(link);
 };
 </script>
