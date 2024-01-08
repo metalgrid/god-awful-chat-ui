@@ -40,10 +40,10 @@
         </div>
         <!-- end search compt -->
         <!-- chat rooms list -->
-        <room-list></room-list>
+        <room-list @click="openChat"></room-list>
         <!-- end chat rooms list -->
         <!-- user list -->
-        <user-list></user-list>
+        <user-list @click="openChat"></user-list>
         <!-- end user list -->
       </div>
       <!-- end chat list -->
@@ -58,9 +58,9 @@ import { provide, inject, ref, defineProps } from "vue";
 import UserList from "./chat/UserList.vue";
 import RoomList from "./chat/RoomList.vue";
 import MessageWindow from "./chat/MessageWindow.vue";
-import {Stomp} from "@stomp/stompjs";
+import { Stomp } from "@stomp/stompjs";
 
-const auth = inject('auth');
+const auth = inject("auth");
 const props = defineProps(["user"]);
 const messages = ref([]);
 const users = ref([]);
@@ -93,6 +93,26 @@ const status = () => {
   }
 };
 
+const openChat = async (chat) => {
+  let res;
+  switch (chat.type) {
+    case "room":
+      await getMessages(chat.id);
+      break;
+    case "private":
+      res = await fetch(`http://127.0.0.1:8080/api/v1/conversations/participants/${chat.username}/messages`, {headers: {Authorization: `Bearer ${auth.token}`}});
+      if (res.status !== 200) {
+        console.error("Fukup");
+      }
+      res = await res.json();
+      if (res?.exists) {
+        messages.value = res.messages
+      } else {
+        newChat(chat)
+      }
+  }
+}
+
 const setStatus = () => {
   return false;
   // switch (user.status) {
@@ -110,13 +130,16 @@ const setStatus = () => {
 
 const getMessages = async (convId) => {
   let data;
-  const res = await fetch(`http://127.0.0.1:8080/api/v1/conversations/${convId}/messages`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${auth.token}`,
-    },
-  });
+  const res = await fetch(
+    `http://127.0.0.1:8080/api/v1/conversations/${convId}/messages`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${auth.token}`,
+      },
+    }
+  );
 
   if (res.status === 200) {
     data = await res.json();
@@ -124,29 +147,62 @@ const getMessages = async (convId) => {
   } else {
     console.error("Could not retrieve messages: ", res.status);
   }
-}
+};
 
 const stompClient = Stomp.client("ws://127.0.0.1:8080/ws-native");
 
-stompClient.connect({}, () => {
-  let data;
-  stompClient.subscribe("/chatroom/public", (msg) => {
-    switch (msg.command) {
-      case "MESSAGE":
-        data = JSON.parse(msg.body);
-        getMessages(data.conversationId);
-        break;
-      case "JOIN":
-        console.log(msg);
-        break;
-      case "LEAVE":
-        console.log(msg);
-        break;
-      default:
-        break;
-    }
-    console.log(msg);
+stompClient.connect(
+  {},
+  () => {
+    let data;
+    stompClient.subscribe("/chatroom/public", (msg) => {
+      switch (msg.command) {
+        case "MESSAGE":
+          data = JSON.parse(msg.body);
+          getMessages(data.conversationId);
+          break;
+        case "JOIN":
+          console.log(msg);
+          break;
+        case "LEAVE":
+          console.log(msg);
+          break;
+        default:
+          break;
+      }
+      console.log(msg);
+    });
+  },
+  (e) => {
+    console.log("error", e);
+  }
+);
+
+const newChat = async (user) => {
+  const payload = {
+    participants: [user.username],
+  };
+  const res = await fetch("http://127.0.0.1:8080/api/v1/conversations", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${auth.token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
   });
-}, (e) => { console.log("error", e)});
+
+  switch (res.status) {
+    case 200:
+      console.log(await res.json());
+      break;
+    case 401:
+      alert("Unauthorized");
+      break;
+    default:
+      alert("Something went wrong");
+      break;
+  }
+};
+
 </script>
 <style scoped></style>

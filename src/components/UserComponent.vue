@@ -1,51 +1,69 @@
 <template>
   <div
-    class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200"
+    class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200 hover:cursor-pointer"
   >
     <div class="w-1/4">
       <img
-        v-if="user.profileImage"
-        :src="user.profileImage"
+        v-if="props.user.profileImage"
+        :src="props.user.profileImage"
         class="object-cover h-12 w-12 rounded-full relative"
-        :alt="user.username"
+        :alt="props.user.username"
       />
       <div
         v-else
-        class="w-12 h-12 p-2 bg-yellow-500 rounded-full relative text-white font-semibold flex items-center justify-center"
+        :class="`bg-${getColor(props.user.username + props.user.id)}-500`"
+        class="w-12 h-12 p-2 rounded-full relative text-white font-semibold flex items-center justify-center"
       >
-        {{ getInitials(user.username) }}
+        {{ getInitials(props.user.username) }}
       </div>
     </div>
     <div class="w-full">
-      <div class="text-lg font-semibold">{{ user.username }}</div>
+      <div class="text-lg font-semibold">{{ props.user.username }}</div>
       <!-- <span class="text-gray-500">Pick me at 9:00 Am</span> -->
     </div>
   </div>
 </template>
 <script setup>
-import { defineProps, inject } from "vue";
-
-const users = inject("users");
-console.log("usercomponent", users);
-let user = {
-  id: 0,
-  username: "Unknown user",
-  profileImage: "",
-};
-
-for (const u of users) {
-  if (u.id == props.id) {
-    user = u;
-    break;
-  }
-}
+import { defineProps } from "vue";
 
 const props = defineProps({
-  id: {
-    type: Number,
+  user: {
+    type: Object,
     required: true,
   },
 });
+
+function shash(string) {
+    let char, i;
+    let hash = 0;
+
+    if (string.length == 0) return hash;
+
+    for (i = 0; i < string.length; i++) {
+        char = string.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+
+    return hash;
+}
+
+const twColors = [
+  "yellow",
+  "gray",
+  "blue",
+  "orange",
+  "red",
+  "green"
+];
+
+const getColor = (string) => {
+
+  const h = shash(string);
+  const index = Math.abs(h) % twColors.length;
+  console.log(string, index);
+  return twColors[index];
+}
 
 const getInitials = (fullName) => {
   const allNames = fullName.trim().split(" ");

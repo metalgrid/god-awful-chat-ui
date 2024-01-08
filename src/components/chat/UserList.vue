@@ -1,27 +1,6 @@
 <template>
-  <user-component v-for="user in users.value" :key="user.id" :id="user.id"></user-component>
-  <div
-    v-for="user in users"
-    :key="user.id"
-    class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200"
-    @click="openChat(user)"
-  >
-    <div class="w-1/4">
-      <div
-        class="w-12 h-12 p-2 bg-yellow-500 rounded-full relative text-white font-semibold flex items-center justify-center"
-      >
-        {{ getInitials(user.username) }}
-        <div
-          :class="status(user?.status)"
-          class="h-3 w-3 rounded-full absolute bottom-0 right-0"
-        ></div>
-      </div>
-    </div>
-    <div class="w-full">
-      <div class="text-lg font-semibold">{{ user.username }}</div>
-      <!-- <span class="text-gray-500">Pick me at 9:00 Am</span> -->
-    </div>
-  </div>
+  <user-component @click="$emit('click', {type: 'private', ...user})" v-for="user in users" :key="user.id" :user="user"></user-component>
+  
   <!--
         <div class="flex flex-row py-4 px-2 items-center border-b-2">
           <div class="w-1/4">
@@ -94,7 +73,7 @@
 </template>
 <script setup>
 import UserComponent from "../UserComponent.vue";
-import { inject} from "vue";
+import { inject } from "vue";
 
 const users = inject("users");
 const auth = inject("auth");
@@ -124,55 +103,57 @@ const getUsers = async () => {
 
 getUsers();
 
+// const getExistingChat = async (username) => {
+//   let data;
+//   const res = await fetch(
+//     `http://localhost:8080/api/v1/conversations/participants/${username}/messages`,
+//     {
+//       headers: {
+//         Authorization: `Bearer ${auth.token}`,
+//         "Content-Type": "application/json",
+//       },
+//     });
 
+//   switch (res.status) {
+//     case 200:
+//       data = await res.json();
 
-const openChat = async (user) => {
-  const payload = {
-    participants: [user.username],
-  }
-  const res = await fetch("http://127.0.0.1:8080/api/v1/conversations", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${auth.token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+//       if (data?.exists) {
+//         console.log(data.messages);
+//       }
+//       break;
+//     case 401:
+//       alert("Unauthorized");
+//       break;
+//     default:
+//       alert("Something went wrong");
+//       break;
+//   }
+// }
 
-  switch (res.status) {
-    case 200:
-      console.log(await res.json());
-      break;
-    case 401:
-      alert("Unauthorized");
-      break;
-    default:
-      alert("Something went wrong");
-      break;
-  }
-};
+// const openChat = async (user) => {
+//   const payload = {
+//     participants: [user.username],
+//   };
+//   const res = await fetch("http://127.0.0.1:8080/api/v1/conversations", {
+//     method: "POST",
+//     headers: {
+//       Authorization: `Bearer ${auth.token}`,
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(payload),
+//   });
 
-const getInitials = (fullName) => {
-  const allNames = fullName.trim().split(" ");
-  const initials = allNames.reduce((acc, curr, index) => {
-    if (index === 0 || index === allNames.length - 1) {
-      acc = `${acc}${curr.charAt(0).toUpperCase()}`;
-    }
-    return acc;
-  }, "");
-  return initials;
-};
-
-const status = (status) => {
-  switch (status) {
-    case "online":
-      return "bg-green-500";
-    case "offline":
-      return "bg-gray-500";
-    case "dnd":
-      return "bg-red-500";
-    default:
-      return "bg-yellow-500";
-  }
-};
+//   switch (res.status) {
+//     case 200:
+//       console.log(await res.json());
+//       break;
+//     case 401:
+//       alert("Unauthorized");
+//       break;
+//     default:
+//       alert("Something went wrong");
+//       break;
+//   }
+// };
 </script>

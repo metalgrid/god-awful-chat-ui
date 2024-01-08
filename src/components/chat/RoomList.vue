@@ -1,8 +1,9 @@
 <template>
     <div
     v-for="room in rooms"
+    @click="$emit('click', {type: 'room', ...room})"
     :key="room.id"
-    class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200"
+    class="flex flex-row py-4 px-2 justify-center items-center border-b-2 hover:bg-gray-200 hover:cursor-pointer"
   >
     <div class="w-1/4">
       <div
