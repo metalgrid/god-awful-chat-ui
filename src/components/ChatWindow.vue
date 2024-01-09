@@ -73,7 +73,7 @@ const openChat = async (chat) => {
       break;
     case "private":
       res = await fetch(
-        `http://127.0.0.1:8080/api/v1/conversations/participants/${chat.username}/messages`,
+        `/api/v1/conversations/participants/${chat.username}/messages`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
       if (res.status !== 200) {
@@ -94,7 +94,7 @@ const openChat = async (chat) => {
 const getMessages = async (convId) => {
   let data;
   const res = await fetch(
-    `http://127.0.0.1:8080/api/v1/conversations/${convId}/messages`,
+    `/api/v1/conversations/${convId}/messages`,
     {
       method: "GET",
       headers: {
@@ -112,7 +112,7 @@ const getMessages = async (convId) => {
   }
 };
 
-const stompClient = Stomp.client("ws://127.0.0.1:8080/ws-native");
+const stompClient = Stomp.client(`ws://${document.location.host}/ws-native`);
 
 stompClient.connect(
   {},
@@ -168,7 +168,7 @@ const newChat = async (user) => {
   const payload = {
     participants: [user.username],
   };
-  const res = await fetch("http://127.0.0.1:8080/api/v1/conversations", {
+  const res = await fetch("/api/v1/conversations", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${auth.token}`,

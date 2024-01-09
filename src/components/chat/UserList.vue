@@ -81,7 +81,7 @@ const auth = inject("auth");
 const emits = defineEmits(["click"]);
 
 const getUsers = async () => {
-  const res = await fetch("http://127.0.0.1:8080/api/v1/users", {
+  const res = await fetch("/api/v1/users", {
     headers: {
       Authorization: `Bearer ${auth.token}`,
     },
@@ -137,7 +137,7 @@ getUsers();
 //   const payload = {
 //     participants: [user.username],
 //   };
-//   const res = await fetch("http://127.0.0.1:8080/api/v1/conversations", {
+//   const res = await fetch("/api/v1/conversations", {
 //     method: "POST",
 //     headers: {
 //       Authorization: `Bearer ${auth.token}`,
