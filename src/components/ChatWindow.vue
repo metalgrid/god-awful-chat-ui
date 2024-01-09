@@ -39,7 +39,7 @@
       </div>
       <!-- end chat list -->
       <!-- message -->
-      <message-window :conversation="conversations[convId]"></message-window>
+      <message-window @message="sendMessage" :conversation="conversations[convId]"></message-window>
       <!-- end message -->
     </div>
   </div>
@@ -82,6 +82,7 @@ const openChat = async (chat) => {
       res = await res.json();
       if (res?.exists) {
         await getMessages(res.id);
+        conversations.value[res.id].username = chat.username;
         convId.value = res.id;
       } else {
         newChat(chat);
@@ -143,6 +144,15 @@ stompClient.connect(
     console.log("error", e);
   }
 );
+
+
+const sendMessage = async(payload) => {
+  if (payload?.receiverName) {
+    stompClient.send("/app/private-message", {}, JSON.stringify(payload));
+  } else {
+    stompClient.send("/app/message", {}, JSON.stringify(payload));
+  }
+}
 
 // const sendMessage = async (text) => {
 //   const payload = {

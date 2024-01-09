@@ -48,10 +48,12 @@
   </div>
 </template>
 <script setup>
-import { ref, inject, defineProps } from "vue";
+import { ref, inject, defineProps, defineEmits } from "vue";
 import SendIcon from "../icons/SendIcon.vue";
 import Message from "./MessageInstance.vue";
 import UserComponent from "../UserComponent.vue";
+
+const emit = defineEmits(["message"]);
 
 const props = defineProps({
   conversation: {
@@ -61,6 +63,7 @@ const props = defineProps({
 });
 
 const user = inject("user");
+
 let text = "";
 
 const formatDate = (date) => {
@@ -101,14 +104,18 @@ const handlePaste = (ev) => {
 };
 
 const sendMessage = () => {
-  return;
-  // if (!text.trim()) return;
-  // messages.value.push({
-  //   id: messages.value.length + 1,
-  //   text: text,
-  //   sender: user.id,
-  // });
-  // text = "";
+  if (!text.trim()) return;
+  const payload = {
+    message: text,
+    conversationId: props.conversation.id,
+    senderName: user.username,
+  }
+  if (!props.conversation.public) {
+    payload.receiverName = props.conversation.username
+  }
+
+  emit("message", payload);
+  text = "";
 };
 
 const highlights = ref([]);
