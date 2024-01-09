@@ -147,22 +147,11 @@ stompClient.connect(
 
 
 const sendMessage = async(payload) => {
-  if (payload?.receiverName) {
-    stompClient.send("/app/private-message", {}, JSON.stringify(payload));
-  } else {
-    stompClient.send("/app/message", {}, JSON.stringify(payload));
-  }
+  // If payload has a receiverName, it's a private conversation - route to the private-message endpoint.
+  const dest = payload?.receiverName ? "private-message" : "message";
+  stompClient.send(`/app/${dest}`, {}, JSON.stringify(payload));
 }
 
-// const sendMessage = async (text) => {
-//   const payload = {
-//     senderName: auth.user.username,
-//     receiverName:
-//     conversationId: convId,
-//     message: text
-//   }
-
-// }
 
 const newChat = async (user) => {
   const payload = {
