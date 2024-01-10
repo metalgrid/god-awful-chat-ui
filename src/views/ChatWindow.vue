@@ -173,7 +173,7 @@
                 </li>
                 <li class="my-2 p-2 flex flex-row bg-blue-500 rounded-lg cursor-pointer">
                   <img
-                    src="https://t.aimg.sk/magaziny/Ts0fWXOKR12frPTjZ3a8UA~Prav-burger-dom-ca-buchta.png?t=LzB4MzU6NTg2eDM2NS85MjB4NzYwL3NtYXJ0L2ZpbHRlcnM6Zm9ybWF0KGpwZWcp&h=aSkfJNypYaRvL4kRNsFH8g&e=2145916800&v=5"
+                    src="https://i.pravatar.cc/128"
                     class="h-12 w-12 rounded-full mr-4"
                     alt=""
                   />
@@ -600,7 +600,7 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 body {
   background: url('https://i.redd.it/iibrptucse951.png');
   background-repeat: no-repeat;
