@@ -142,7 +142,7 @@ const validate = () => {
 };
 
 const doLogin = async () => {
-  const res = await fetch("/api/v1/auth", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/auth", {
     mode: "cors",
     method: "POST",
     headers: {
@@ -174,7 +174,7 @@ const doLogin = async () => {
 };
 
 const doRegister = async () => {
-  const res = await fetch("/api/v1/users", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/users", {
     mode: "cors",
     method: "POST",
     headers: {

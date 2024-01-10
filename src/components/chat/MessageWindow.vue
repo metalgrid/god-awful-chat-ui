@@ -104,6 +104,7 @@ const handlePaste = (ev) => {
 };
 
 const sendMessage = () => {
+  if(!props?.conversation) return;
   if (!text.trim()) return;
   const payload = {
     message: text,

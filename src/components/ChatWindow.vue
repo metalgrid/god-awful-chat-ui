@@ -1,7 +1,7 @@
 <template>
   <!-- component -->
   <!-- This is an example component -->
-  <div class="container mx-auto shadow-lg rounded-lg">
+  <div :class="!connected ? 'blur pointer-events-none' : ''" class="container mx-auto shadow-lg rounded-lg">
     <!-- headaer -->
     <div class="px-5 py-5 flex justify-between items-center bg-white border-b-2">
       <div class="font-semibold text-2xl">DSChat</div>
@@ -39,10 +39,15 @@
       </div>
       <!-- end chat list -->
       <!-- message -->
-      <message-window @message="sendMessage" :conversation="conversations[convId]"></message-window>
+      <message-window
+        v-if="connected"
+        @message="sendMessage"
+        :conversation="conversations[convId]"
+      ></message-window>
       <!-- end message -->
     </div>
   </div>
+  <loading-spinner v-if="!connected"></loading-spinner>
 </template>
 <script setup>
 import { provide, inject, ref, defineProps } from "vue";
@@ -50,6 +55,7 @@ import UserComponent from "./UserComponent.vue";
 import UserList from "./chat/UserList.vue";
 import RoomList from "./chat/RoomList.vue";
 import MessageWindow from "./chat/MessageWindow.vue";
+import LoadingSpinner from "./LoadingSpinner.vue";
 import { Stomp } from "@stomp/stompjs";
 
 const auth = inject("auth");
@@ -58,6 +64,7 @@ const users = ref([]);
 const convId = ref(0);
 
 const conversations = ref({});
+const connected = ref(false);
 
 provide("convId", convId);
 provide("user", props.user);
@@ -73,11 +80,11 @@ const openChat = async (chat) => {
       break;
     case "private":
       res = await fetch(
-        `/api/v1/conversations/participants/${chat.username}/messages`,
+        `http://127.0.0.1:8080/api/v1/conversations/participants/${chat.username}/messages`,
         { headers: { Authorization: `Bearer ${auth.token}` } }
       );
       if (res.status !== 200) {
-        console.error("Fukup");
+        console.error("Something went wrong");
       }
       res = await res.json();
       if (res?.exists) {
@@ -94,7 +101,7 @@ const openChat = async (chat) => {
 const getMessages = async (convId) => {
   let data;
   const res = await fetch(
-    `/api/v1/conversations/${convId}/messages`,
+    `http://127.0.0.1:8080/api/v1/conversations/${convId}/messages`,
     {
       method: "GET",
       headers: {
@@ -112,13 +119,14 @@ const getMessages = async (convId) => {
   }
 };
 
-const stompClient = Stomp.client(`ws://${document.location.host}/ws-native`);
+const stompClient = Stomp.client(`ws://${document.location.hostname}:8080/ws-native`);
 
 stompClient.connect(
   {},
   () => {
     let data;
     stompClient.subscribe(`/user/${auth.user.username}/private`, (msg) => {
+      getMessages(msg.body.conversationId);
       console.log("private message:", msg);
     });
 
@@ -139,25 +147,25 @@ stompClient.connect(
       }
       console.log(msg);
     });
+
+    connected.value = true;
   },
   (e) => {
     console.log("error", e);
   }
 );
 
-
-const sendMessage = async(payload) => {
+const sendMessage = async (payload) => {
   // If payload has a receiverName, it's a private conversation - route to the private-message endpoint.
   const dest = payload?.receiverName ? "private-message" : "message";
   stompClient.send(`/app/${dest}`, {}, JSON.stringify(payload));
-}
-
+};
 
 const newChat = async (user) => {
   const payload = {
     participants: [user.username],
   };
-  const res = await fetch("/api/v1/conversations", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/conversations", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${auth.token}`,

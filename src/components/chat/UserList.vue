@@ -81,7 +81,7 @@ const auth = inject("auth");
 const emits = defineEmits(["click"]);
 
 const getUsers = async () => {
-  const res = await fetch("/api/v1/users", {
+  const res = await fetch("http://127.0.0.1:8080/api/v1/users", {
     headers: {
       Authorization: `Bearer ${auth.token}`,
     },
@@ -105,57 +105,4 @@ const getUsers = async () => {
 
 getUsers();
 
-// const getExistingChat = async (username) => {
-//   let data;
-//   const res = await fetch(
-//     `http://localhost:8080/api/v1/conversations/participants/${username}/messages`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${auth.token}`,
-//         "Content-Type": "application/json",
-//       },
-//     });
-
-//   switch (res.status) {
-//     case 200:
-//       data = await res.json();
-
-//       if (data?.exists) {
-//         console.log(data.messages);
-//       }
-//       break;
-//     case 401:
-//       alert("Unauthorized");
-//       break;
-//     default:
-//       alert("Something went wrong");
-//       break;
-//   }
-// }
-
-// const openChat = async (user) => {
-//   const payload = {
-//     participants: [user.username],
-//   };
-//   const res = await fetch("/api/v1/conversations", {
-//     method: "POST",
-//     headers: {
-//       Authorization: `Bearer ${auth.token}`,
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(payload),
-//   });
-
-//   switch (res.status) {
-//     case 200:
-//       console.log(await res.json());
-//       break;
-//     case 401:
-//       alert("Unauthorized");
-//       break;
-//     default:
-//       alert("Something went wrong");
-//       break;
-//   }
-// };
 </script>
