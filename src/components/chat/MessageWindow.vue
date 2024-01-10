@@ -9,7 +9,8 @@
         :message="message"
       ></message>
     </div>
-    <div class="flex py-5 relative">
+    <p v-if="!props.conversation" class="text-center text-gray-500 italic py-5">Select a conversation</p>
+    <div v-if="props.conversation" class="flex py-5 relative">
       <input
         @keyup.enter="sendMessage"
         @paste="handlePaste"

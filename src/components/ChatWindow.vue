@@ -126,7 +126,8 @@ stompClient.connect(
   () => {
     let data;
     stompClient.subscribe(`/user/${auth.user.username}/private`, (msg) => {
-      getMessages(msg.body.conversationId);
+      data = JSON.parse(msg.body);
+      getMessages(data.conversationId);
       console.log("private message:", msg);
     });
 
@@ -174,9 +175,12 @@ const newChat = async (user) => {
     body: JSON.stringify(payload),
   });
 
+  let data;
   switch (res.status) {
     case 200:
-      console.log(await res.json());
+      data = await res.json();
+      convId.value = data.id;
+      conversations.value[data.id] = data;
       break;
     case 401:
       alert("Unauthorized");

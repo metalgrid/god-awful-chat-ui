@@ -75,7 +75,6 @@ const twColors = [
 ];
 
 const getColor = (string) => {
-
   const h = shash(string);
   const index = Math.abs(h) % twColors.length;
   return twColors[index-1];
