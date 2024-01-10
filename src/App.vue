@@ -4,7 +4,6 @@
 </template>
 
 <script setup>
-// import LoginWindow from "./components/LoginWindow.vue";
 import LoginRegister from "./components/LoginRegister.vue";
 import ChatWindow from "./components/ChatWindow.vue";
 import "./assets/styles/main.css";

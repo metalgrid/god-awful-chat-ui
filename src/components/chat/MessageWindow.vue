@@ -9,7 +9,9 @@
         :message="message"
       ></message>
     </div>
-    <p v-if="!props.conversation" class="text-center text-gray-500 italic py-5">Select a conversation</p>
+    <p v-if="!props.conversation" class="text-center text-gray-500 italic py-5">
+      Select a conversation
+    </p>
     <div v-if="props.conversation" class="flex py-5 relative">
       <input
         @keyup.enter="sendMessage"
@@ -21,14 +23,24 @@
       <div class="flex justify-end self-center absolute right-1">
         <button
           @click.prevent="sendMessage"
-          class="bg-blue-400 py-2 px-2 rounded-full text-white"
         >
-          <send-icon></send-icon>
+          <fa-icon class=" text-blue-500 hover:text-blue-400 mr-2 rounded-full" icon="paper-plane"></fa-icon>
         </button>
       </div>
     </div>
   </div>
-  <div class="xs:hidden sm:hidden lg:block w-2/5 border-l-2 px-5">
+  <div v-if="props.conversation?.username" class="w-2/5 border-l-2 px-5">
+    <user-component :user="{ username: props.conversation.username }"></user-component>
+    <div class="flex justify-center">
+      <button @click="inCall = true" class="bg-blue-400 hover:bg-blue-500 rounded-lg px-2 py-1 mx-2 text-white">
+        <fa-icon :icon="['fas', 'phone']"></fa-icon>
+      </button>
+      <button class="bg-blue-400 hover:bg-blue-500 rounded-lg px-2 py-1 mx-2 text-white">
+        <fa-icon icon="video"></fa-icon>
+      </button>
+    </div>
+  </div>
+  <div v-if="false" class="xs:hidden sm:hidden lg:block w-2/5 border-l-2 px-5">
     <div class="flex flex-col">
       <div class="font-semibold text-center text-xl py-4">
         Chat highlights
@@ -47,12 +59,13 @@
       </div>
     </div>
   </div>
+  <video-call v-if="inCall"></video-call>
 </template>
 <script setup>
 import { ref, inject, defineProps, defineEmits } from "vue";
-import SendIcon from "../icons/SendIcon.vue";
 import Message from "./MessageInstance.vue";
 import UserComponent from "../UserComponent.vue";
+import VideoCall from "@/components/VideoCall.vue"
 
 const emit = defineEmits(["message"]);
 
@@ -66,6 +79,7 @@ const props = defineProps({
 const user = inject("user");
 
 let text = "";
+const inCall = ref(false);
 
 const formatDate = (date) => {
   // Format the date and time in a short format
@@ -105,15 +119,15 @@ const handlePaste = (ev) => {
 };
 
 const sendMessage = () => {
-  if(!props?.conversation) return;
+  if (!props?.conversation) return;
   if (!text.trim()) return;
   const payload = {
     message: text,
     conversationId: props.conversation.id,
     senderName: user.username,
-  }
+  };
   if (!props.conversation.public) {
-    payload.receiverName = props.conversation.username
+    payload.receiverName = props.conversation.username;
   }
 
   emit("message", payload);
