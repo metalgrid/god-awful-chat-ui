@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply transition duration-500 ease-in-out;
+}
+
+.btn {
+  @apply bg-blue-500 text-white font-bold py-2 px-4 rounded-lg;
+  @apply transition duration-200 ease-in-out;
+}
+
+.btn:hover {
+  @apply bg-blue-700;
+}
+
+.btn:disabled {
+  @apply opacity-50 grayscale cursor-not-allowed;
+}
+
+input {
+  @apply mb-2 border-2 border-gray-400 text-slate-800 rounded-lg px-3 py-2 block;
+}
+
+input:focus {
+  @apply outline-none border-blue-500;
+}
+
+.primary {
+  @apply bg-gray-700 p-3 rounded-lg shadow-md;
+}
+
+@media (prefers-color-scheme: dark) {
+  .primary {
+    @apply bg-gray-500 text-slate-800;
+  }
+}
