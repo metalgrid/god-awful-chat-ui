@@ -43,10 +43,8 @@ const router = createRouter({
 router.beforeEach(
   (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
     const auth: Auth = unref(inject('auth', {} as Auth))
-    console.log("Router's auth guard", auth)
     // Check if the route requires authentication
     if (!to.meta.public && !auth.token) {
-      console.log('Redirecting to login')
       // Redirect to login if not authenticated
       next({ name: 'login' })
     } else {

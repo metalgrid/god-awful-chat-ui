@@ -7,140 +7,36 @@
       <div
         class="w-full lg:w-3/6 xl:w-2/6 flex flex-col justify-start items-stretch bg-white bg-opacity-80 rounded-md lg:rounded-none lg:rounded-l-md p-3"
       >
-        <div class="flex flex-row justify-between items-center mb-4">
-          <div class="flex flex-row">
-            <button
-              class="bg-red-500 text-white rounded-full p-1 mr-2 cursor-pointer h-4 w-4 focus:outline-none focus:ring"
-              aria-label="Close"
-            ></button>
-            <button
-              class="bg-yellow-500 text-white rounded-full p-1 mr-2 cursor-pointer h-4 w-4 focus:outline-none focus:ring"
-              aria-label="Restore Down"
-            ></button>
-            <button
-              class="bg-green-500 text-white rounded-full p-1 mr-5 cursor-pointer h-4 w-4 focus:outline-none focus:ring"
-              aria-label="Minimize"
-            ></button>
-          </div>
-          <div class="p-1 rounded-full text-gray-500">
-            <button
-              class="flex flex-col justify-center items-center p-2 rounded-full focus:ring-2 hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none"
-              aria-label="Add"
-            >
-              <svg class="fill-current h-4 w-4" viewBox="0 0 25 25">
-                <path d="M11 11v-11h1v11h11v1h-11v11h-1v-11h-11v-1h11z" />
-              </svg>
-            </button>
-          </div>
-        </div>
         <div class="flex-auto flex flex-col">
           <div class="flex-auto flex flex-row">
             <div class="p-1 flex flex-col justify-between items-center">
               <div class="">
-                <div class="p-1 flex justify-center items-center text-gray-500 cursor-pointer">
+                <div
+                  class="p-1 flex justify-center items-center text-gray-500 cursor-pointer"
+                >
                   <button
                     class="flex flex-col justify-center items-center w-full p-1 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
                     aria-label="Hamburger menu"
                   >
-                    <svg class="fill-current h-5 w-5" viewBox="0 0 20 20">
-                      <path
-                        d="M3.314,4.8h13.372c0.41,0,0.743-0.333,0.743-0.743c0-0.41-0.333-0.743-0.743-0.743H3.314
-                          c-0.41,0-0.743,0.333-0.743,0.743C2.571,4.467,2.904,4.8,3.314,4.8z M16.686,15.2H3.314c-0.41,0-0.743,0.333-0.743,0.743
-                          s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,15.2,16.686,15.2z M16.686,9.257H3.314
-                          c-0.41,0-0.743,0.333-0.743,0.743s0.333,0.743,0.743,0.743h13.372c0.41,0,0.743-0.333,0.743-0.743S17.096,9.257,16.686,9.257z"
-                      ></path>
-                    </svg>
+                    <fa-icon class="h-5 w-5" :icon="['fas', 'bars']" />
                   </button>
                 </div>
                 <ul class="">
-                  <li class="my-2 text-gray-900 cursor-pointer">
-                    <button
-                      class="flex flex-col justify-center items-center w-full p-2 rounded-lg bg-gray-600 bg-opacity-10 focus:outline-none focus:ring relative"
-                    >
-                      <svg class="fill-current h-7 w-7" viewBox="0 0 20 20">
-                        <path
-                          d="M17.659,3.681H8.468c-0.211,0-0.383,0.172-0.383,0.383v2.681H2.341c-0.21,0-0.383,0.172-0.383,0.383v6.126c0,0.211,0.172,0.383,0.383,0.383h1.532v2.298c0,0.566,0.554,0.368,0.653,0.27l2.569-2.567h4.437c0.21,0,0.383-0.172,0.383-0.383v-2.681h1.013l2.546,2.567c0.242,0.249,0.652,0.065,0.652-0.27v-2.298h1.533c0.211,0,0.383-0.172,0.383-0.382V4.063C18.042,3.853,17.87,3.681,17.659,3.681 M11.148,12.87H6.937c-0.102,0-0.199,0.04-0.27,0.113l-2.028,2.025v-1.756c0-0.211-0.172-0.383-0.383-0.383H2.724V7.51h5.361v2.68c0,0.21,0.172,0.382,0.383,0.382h2.68V12.87z M17.276,9.807h-1.533c-0.211,0-0.383,0.172-0.383,0.383v1.755L13.356,9.92c-0.07-0.073-0.169-0.113-0.27-0.113H8.851v-5.36h8.425V9.807z"
-                        ></path>
-                      </svg>
-                      <p class="text-xs font-semibold">All chats</p>
-                      <span
-                        class="bg-blue-600 w-4 h-4 text-xs rounded-full text-white font-semibold absolute right-3 top-1"
-                        >2</span
-                      >
-                    </button>
-                  </li>
-                  <li class="my-2 text-gray-500">
-                    <button
-                      class="flex flex-col justify-center items-center w-full p-2 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
-                    >
-                      <svg class="fill-current h-7 w-78" viewBox="0 0 20 20">
-                        <path
-                          d="M17.657,2.982H2.342c-0.234,0-0.425,0.191-0.425,0.426v10.21c0,0.234,0.191,0.426,0.425,0.426h3.404v2.553c0,0.397,0.48,0.547,0.725,0.302l2.889-2.854h8.298c0.234,0,0.426-0.191,0.426-0.426V3.408C18.083,3.174,17.892,2.982,17.657,2.982M17.232,13.192H9.185c-0.113,0-0.219,0.045-0.3,0.124l-2.289,2.262v-1.96c0-0.233-0.191-0.426-0.425-0.426H2.767V3.833h14.465V13.192z M10,7.237c-0.821,0-1.489,0.668-1.489,1.489c0,0.821,0.668,1.489,1.489,1.489c0.821,0,1.488-0.668,1.488-1.489C11.488,7.905,10.821,7.237,10,7.237 M10,9.364c-0.352,0-0.638-0.288-0.638-0.638c0-0.351,0.287-0.638,0.638-0.638c0.351,0,0.638,0.287,0.638,0.638C10.638,9.077,10.351,9.364,10,9.364 M14.254,7.237c-0.821,0-1.489,0.668-1.489,1.489c0,0.821,0.668,1.489,1.489,1.489s1.489-0.668,1.489-1.489C15.743,7.905,15.075,7.237,14.254,7.237 M14.254,9.364c-0.351,0-0.638-0.288-0.638-0.638c0-0.351,0.287-0.638,0.638-0.638c0.352,0,0.639,0.287,0.639,0.638C14.893,9.077,14.605,9.364,14.254,9.364 M5.746,7.237c-0.821,0-1.489,0.668-1.489,1.489c0,0.821,0.668,1.489,1.489,1.489c0.821,0,1.489-0.668,1.489-1.489C7.234,7.905,6.566,7.237,5.746,7.237 M5.746,9.364c-0.351,0-0.638-0.288-0.638-0.638c0-0.351,0.287-0.638,0.638-0.638c0.351,0,0.638,0.287,0.638,0.638C6.384,9.077,6.096,9.364,5.746,9.364"
-                        ></path>
-                      </svg>
-                      <p class="text-xs font-semibold">Unread</p>
-                    </button>
-                  </li>
-                  <li class="my-2 text-gray-500">
-                    <button
-                      class="flex flex-col justify-center items-center w-full p-2 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
-                    >
-                      <svg class="fill-current h-7 w-7" viewBox="0 0 20 20">
-                        <path
-                          d="M10,10.9c2.373,0,4.303-1.932,4.303-4.306c0-2.372-1.93-4.302-4.303-4.302S5.696,4.223,5.696,6.594C5.696,8.969,7.627,10.9,10,10.9z M10,3.331c1.801,0,3.266,1.463,3.266,3.263c0,1.802-1.465,3.267-3.266,3.267c-1.8,0-3.265-1.465-3.265-3.267C6.735,4.794,8.2,3.331,10,3.331z"
-                        ></path>
-                        <path
-                          d="M10,12.503c-4.418,0-7.878,2.058-7.878,4.685c0,0.288,0.231,0.52,0.52,0.52c0.287,0,0.519-0.231,0.519-0.52c0-1.976,3.132-3.646,6.84-3.646c3.707,0,6.838,1.671,6.838,3.646c0,0.288,0.234,0.52,0.521,0.52s0.52-0.231,0.52-0.52C17.879,14.561,14.418,12.503,10,12.503z"
-                        ></path>
-                      </svg>
-                      <p class="text-xs font-semibold">Personal</p>
-                    </button>
-                  </li>
-                  <li class="my-2 text-gray-500">
-                    <button
-                      class="flex flex-col justify-center items-center w-full p-2 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
-                    >
-                      <svg class="fill-current h-7 w-7" viewBox="0 0 20 20">
-                        <path
-                          d="M15.808,14.066H6.516v-1.162H5.354v1.162H4.193c-0.321,0-0.581,0.26-0.581,0.58s0.26,0.58,0.581,0.58h1.162
-                            v1.162h1.162v-1.162h9.292c0.32,0,0.58-0.26,0.58-0.58S16.128,14.066,15.808,14.066z M15.808,9.419h-1.742V8.258h-1.162v1.161
-                            h-8.71c-0.321,0-0.581,0.26-0.581,0.581c0,0.321,0.26,0.581,0.581,0.581h8.71v1.161h1.162v-1.161h1.742
-                            c0.32,0,0.58-0.26,0.58-0.581C16.388,9.679,16.128,9.419,15.808,9.419z M17.55,0.708H2.451c-0.962,0-1.742,0.78-1.742,1.742v15.1
-                            c0,0.961,0.78,1.74,1.742,1.74H17.55c0.962,0,1.742-0.779,1.742-1.74v-15.1C19.292,1.488,18.512,0.708,17.55,0.708z M18.13,17.551
-                            c0,0.32-0.26,0.58-0.58,0.58H2.451c-0.321,0-0.581-0.26-0.581-0.58v-15.1c0-0.321,0.26-0.581,0.581-0.581H17.55
-                            c0.32,0,0.58,0.26,0.58,0.581V17.551z M15.808,4.774H9.419V3.612H8.258v1.162H4.193c-0.321,0-0.581,0.26-0.581,0.581
-                            s0.26,0.581,0.581,0.581h4.065v1.162h1.161V5.935h6.388c0.32,0,0.58-0.26,0.58-0.581S16.128,4.774,15.808,4.774z"
-                        ></path>
-                      </svg>
-                      <p class="text-xs font-semibold">Edit</p>
-                    </button>
-                  </li>
+                  <nav-button icon="comments" :badge="2" active>All chats</nav-button>
+                  <nav-button icon="comment-dots">Unread</nav-button>
+                  <nav-button icon="address-card">Personal</nav-button>
+                  <nav-button icon="sliders">Edit</nav-button>
                 </ul>
               </div>
               <ul>
-                <li class="my-2 text-gray-500">
-                  <button
-                    class="flex flex-col justify-center items-center p-2 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
-                  >
-                    <svg class="fill-current h-7 w-7" viewBox="0 0 20 20">
-                      <path
-                        d="M17.498,11.697c-0.453-0.453-0.704-1.055-0.704-1.697c0-0.642,0.251-1.244,0.704-1.697c0.069-0.071,0.15-0.141,0.257-0.22c0.127-0.097,0.181-0.262,0.137-0.417c-0.164-0.558-0.388-1.093-0.662-1.597c-0.075-0.141-0.231-0.22-0.391-0.199c-0.13,0.02-0.238,0.027-0.336,0.027c-1.325,0-2.401-1.076-2.401-2.4c0-0.099,0.008-0.207,0.027-0.336c0.021-0.158-0.059-0.316-0.199-0.391c-0.503-0.274-1.039-0.498-1.597-0.662c-0.154-0.044-0.32,0.01-0.416,0.137c-0.079,0.106-0.148,0.188-0.22,0.257C11.244,2.956,10.643,3.207,10,3.207c-0.642,0-1.244-0.25-1.697-0.704c-0.071-0.069-0.141-0.15-0.22-0.257C7.987,2.119,7.821,2.065,7.667,2.109C7.109,2.275,6.571,2.497,6.07,2.771C5.929,2.846,5.85,3.004,5.871,3.162c0.02,0.129,0.027,0.237,0.027,0.336c0,1.325-1.076,2.4-2.401,2.4c-0.098,0-0.206-0.007-0.335-0.027C3.001,5.851,2.845,5.929,2.77,6.07C2.496,6.572,2.274,7.109,2.108,7.667c-0.044,0.154,0.01,0.32,0.137,0.417c0.106,0.079,0.187,0.148,0.256,0.22c0.938,0.936,0.938,2.458,0,3.394c-0.069,0.072-0.15,0.141-0.256,0.221c-0.127,0.096-0.181,0.262-0.137,0.416c0.166,0.557,0.388,1.096,0.662,1.596c0.075,0.143,0.231,0.221,0.392,0.199c0.129-0.02,0.237-0.027,0.335-0.027c1.325,0,2.401,1.076,2.401,2.402c0,0.098-0.007,0.205-0.027,0.334C5.85,16.996,5.929,17.154,6.07,17.23c0.501,0.273,1.04,0.496,1.597,0.66c0.154,0.047,0.32-0.008,0.417-0.137c0.079-0.105,0.148-0.186,0.22-0.256c0.454-0.453,1.055-0.703,1.697-0.703c0.643,0,1.244,0.25,1.697,0.703c0.071,0.07,0.141,0.15,0.22,0.256c0.073,0.098,0.188,0.152,0.307,0.152c0.036,0,0.073-0.004,0.109-0.016c0.558-0.164,1.096-0.387,1.597-0.66c0.141-0.076,0.22-0.234,0.199-0.393c-0.02-0.129-0.027-0.236-0.027-0.334c0-1.326,1.076-2.402,2.401-2.402c0.098,0,0.206,0.008,0.336,0.027c0.159,0.021,0.315-0.057,0.391-0.199c0.274-0.5,0.496-1.039,0.662-1.596c0.044-0.154-0.01-0.32-0.137-0.416C17.648,11.838,17.567,11.77,17.498,11.697 M16.671,13.334c-0.059-0.002-0.114-0.002-0.168-0.002c-1.749,0-3.173,1.422-3.173,3.172c0,0.053,0.002,0.109,0.004,0.166c-0.312,0.158-0.64,0.295-0.976,0.406c-0.039-0.045-0.077-0.086-0.115-0.123c-0.601-0.6-1.396-0.93-2.243-0.93s-1.643,0.33-2.243,0.93c-0.039,0.037-0.077,0.078-0.116,0.123c-0.336-0.111-0.664-0.248-0.976-0.406c0.002-0.057,0.004-0.113,0.004-0.166c0-1.75-1.423-3.172-3.172-3.172c-0.054,0-0.11,0-0.168,0.002c-0.158-0.312-0.293-0.639-0.405-0.975c0.044-0.039,0.085-0.078,0.124-0.115c1.236-1.236,1.236-3.25,0-4.486C3.009,7.719,2.969,7.68,2.924,7.642c0.112-0.336,0.247-0.664,0.405-0.976C3.387,6.668,3.443,6.67,3.497,6.67c1.75,0,3.172-1.423,3.172-3.172c0-0.054-0.002-0.11-0.004-0.168c0.312-0.158,0.64-0.293,0.976-0.405C7.68,2.969,7.719,3.01,7.757,3.048c0.6,0.6,1.396,0.93,2.243,0.93s1.643-0.33,2.243-0.93c0.038-0.039,0.076-0.079,0.115-0.123c0.336,0.112,0.663,0.247,0.976,0.405c-0.002,0.058-0.004,0.114-0.004,0.168c0,1.749,1.424,3.172,3.173,3.172c0.054,0,0.109-0.002,0.168-0.004c0.158,0.312,0.293,0.64,0.405,0.976c-0.045,0.038-0.086,0.077-0.124,0.116c-0.6,0.6-0.93,1.396-0.93,2.242c0,0.847,0.33,1.645,0.93,2.244c0.038,0.037,0.079,0.076,0.124,0.115C16.964,12.695,16.829,13.021,16.671,13.334 M10,5.417c-2.528,0-4.584,2.056-4.584,4.583c0,2.529,2.056,4.584,4.584,4.584s4.584-2.055,4.584-4.584C14.584,7.472,12.528,5.417,10,5.417 M10,13.812c-2.102,0-3.812-1.709-3.812-3.812c0-2.102,1.71-3.812,3.812-3.812c2.102,0,3.812,1.71,3.812,3.812C13.812,12.104,12.102,13.812,10,13.812"
-                      ></path>
-                    </svg>
-                    <p class="text-xs font-semibold">Settings</p>
-                  </button>
-                </li>
+                <nav-button icon="gear">Settings</nav-button>
               </ul>
             </div>
             <div class="w-full p-1">
-              <div class="w-full p-1">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  class="search-input bg-gray-600 bg-opacity-10 placeholder-gray-500 text-gray-400 text-sm py-1 px-10 rounded-md outline-none w-full focus:outline-none focus:ring"
-                />
-              </div>
+              <search-box v-model="search"></search-box>
               <ul class="overflow-y-auto">
+                <user-card :user="user"></user-card>
+                <user-card :user="user" active></user-card>
                 <li
                   class="my-2 p-2 flex flex-row cursor-pointer rounded-lg hover:bg-gray-50 hover:bg-opacity-50"
                 >
@@ -153,7 +49,10 @@
                     <div class="flex flex-row justify-between items-center">
                       <h2 class="text-xs font-bold">Benjamin Julien</h2>
                       <div class="text-xs flex flex-row">
-                        <svg class="w-4 h-4 text-blue-600 fill-current mr-1" viewBox="0 0 19 14">
+                        <svg
+                          class="w-4 h-4 text-blue-600 fill-current mr-1"
+                          viewBox="0 0 19 14"
+                        >
                           <path
                             fill-rule="nonzero"
                             d="M4.96833846,10.0490996 L11.5108251,2.571972 C11.7472185,2.30180819 12.1578642,2.27443181 12.428028,2.51082515 C12.6711754,2.72357915 12.717665,3.07747757 12.5522007,3.34307913 L12.4891749,3.428028 L5.48917485,11.428028 C5.2663359,11.6827011 4.89144111,11.7199091 4.62486888,11.5309823 L4.54038059,11.4596194 L1.54038059,8.45961941 C1.2865398,8.20577862 1.2865398,7.79422138 1.54038059,7.54038059 C1.7688373,7.31192388 2.12504434,7.28907821 2.37905111,7.47184358 L2.45961941,7.54038059 L4.96833846,10.0490996 L11.5108251,2.571972 L4.96833846,10.0490996 Z M9.96833846,10.0490996 L16.5108251,2.571972 C16.7472185,2.30180819 17.1578642,2.27443181 17.428028,2.51082515 C17.6711754,2.72357915 17.717665,3.07747757 17.5522007,3.34307913 L17.4891749,3.428028 L10.4891749,11.428028 C10.2663359,11.6827011 9.89144111,11.7199091 9.62486888,11.5309823 L9.54038059,11.4596194 L8.54038059,10.4596194 C8.2865398,10.2057786 8.2865398,9.79422138 8.54038059,9.54038059 C8.7688373,9.31192388 9.12504434,9.28907821 9.37905111,9.47184358 L9.45961941,9.54038059 L9.96833846,10.0490996 L16.5108251,2.571972 L9.96833846,10.0490996 Z"
@@ -163,7 +62,9 @@
                       </div>
                     </div>
                     <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">On projection apartments unsatiable...</p>
+                      <p class="text-xs text-gray-500">
+                        On projection apartments unsatiable...
+                      </p>
                       <span
                         class="text-sm bg-blue-500 rounded-full w-5 h-5 text-center text-white font-bold"
                         >4</span
@@ -199,7 +100,10 @@
                     <div class="flex flex-row justify-between">
                       <h2 class="text-xs font-bold">Angela Vang</h2>
                       <div class="text-xs flex flex-row">
-                        <svg class="w-4 h-4 text-blue-600 fill-current mr-1" viewBox="0 0 20 20">
+                        <svg
+                          class="w-4 h-4 text-blue-600 fill-current mr-1"
+                          viewBox="0 0 20 20"
+                        >
                           <path
                             d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
                           ></path>
@@ -208,7 +112,9 @@
                       </div>
                     </div>
                     <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">Sudden looked elinor off gay estate...</p>
+                      <p class="text-xs text-gray-500">
+                        Sudden looked elinor off gay estate...
+                      </p>
                     </div>
                   </div>
                 </li>
@@ -228,7 +134,9 @@
                       </div>
                     </div>
                     <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">Breakfast agreeable incommode depar...</p>
+                      <p class="text-xs text-gray-500">
+                        Breakfast agreeable incommode depar...
+                      </p>
                     </div>
                   </div>
                 </li>
@@ -244,7 +152,10 @@
                     <div class="flex flex-row justify-between">
                       <h2 class="text-xs font-bold">Yaeko Lindblom</h2>
                       <div class="text-xs flex flex-row">
-                        <svg class="w-4 h-4 text-blue-600 fill-current mr-1" viewBox="0 0 19 14">
+                        <svg
+                          class="w-4 h-4 text-blue-600 fill-current mr-1"
+                          viewBox="0 0 19 14"
+                        >
                           <path
                             fill-rule="nonzero"
                             d="M4.96833846,10.0490996 L11.5108251,2.571972 C11.7472185,2.30180819 12.1578642,2.27443181 12.428028,2.51082515 C12.6711754,2.72357915 12.717665,3.07747757 12.5522007,3.34307913 L12.4891749,3.428028 L5.48917485,11.428028 C5.2663359,11.6827011 4.89144111,11.7199091 4.62486888,11.5309823 L4.54038059,11.4596194 L1.54038059,8.45961941 C1.2865398,8.20577862 1.2865398,7.79422138 1.54038059,7.54038059 C1.7688373,7.31192388 2.12504434,7.28907821 2.37905111,7.47184358 L2.45961941,7.54038059 L4.96833846,10.0490996 L11.5108251,2.571972 L4.96833846,10.0490996 Z M9.96833846,10.0490996 L16.5108251,2.571972 C16.7472185,2.30180819 17.1578642,2.27443181 17.428028,2.51082515 C17.6711754,2.72357915 17.717665,3.07747757 17.5522007,3.34307913 L17.4891749,3.428028 L10.4891749,11.428028 C10.2663359,11.6827011 9.89144111,11.7199091 9.62486888,11.5309823 L9.54038059,11.4596194 L8.54038059,10.4596194 C8.2865398,10.2057786 8.2865398,9.79422138 8.54038059,9.54038059 C8.7688373,9.31192388 9.12504434,9.28907821 9.37905111,9.47184358 L9.45961941,9.54038059 L9.96833846,10.0490996 L16.5108251,2.571972 L9.96833846,10.0490996 Z"
@@ -254,7 +165,9 @@
                       </div>
                     </div>
                     <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">New the her nor case that lady paid...</p>
+                      <p class="text-xs text-gray-500">
+                        New the her nor case that lady paid...
+                      </p>
                       <span
                         class="text-sm bg-blue-500 rounded-full w-5 h-5 text-center text-white font-bold"
                         >1</span
@@ -336,9 +249,12 @@
                 <div class="bg-gray-50 p-3 rounded-xl mb-2 relative">
                   <h2 class="text-sm font-semibold mb-2">Yaeko Lindblom</h2>
                   <p class="text-sm">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting
+                    industry.
                   </p>
-                  <span class="text-xs text-gray-500 absolute right-2 bottom-2">09:24</span>
+                  <span class="text-xs text-gray-500 absolute right-2 bottom-2"
+                    >09:24</span
+                  >
                 </div>
                 <div class="mb-2">
                   <img
@@ -350,12 +266,14 @@
                 <div class="bg-gray-50 p-3 rounded-xl mt-2 relative">
                   <h2 class="font-semibold mb-2 text-sm">Yaeko Lindblom</h2>
                   <p class="text-sm">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-                    Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-                    unknown printer took a galley of type and scrambled it to make a type specimen
-                    book.
+                    Lorem Ipsum is simply dummy text of the printing and typesetting
+                    industry. Lorem Ipsum has been the industry's standard dummy text ever
+                    since the 1500s, when an unknown printer took a galley of type and
+                    scrambled it to make a type specimen book.
                   </p>
-                  <span class="text-xs text-gray-500 absolute right-2 bottom-2">10:44</span>
+                  <span class="text-xs text-gray-500 absolute right-2 bottom-2"
+                    >10:44</span
+                  >
                 </div>
               </div>
             </div>
@@ -364,7 +282,9 @@
                 <div
                   class="px-4 py-3 rounded-full my-2 bg-blue-500 text-white flex flex-row items-center"
                 >
-                  <p class="text-sm flex">There are many variations of passages of Lorem Ipsum</p>
+                  <p class="text-sm flex">
+                    There are many variations of passages of Lorem Ipsum
+                  </p>
                   <div class="ml-2 flex flex-row text-xs text-gray-300">
                     <span class="mr-1"> 10:46 </span>
                     <svg class="w-4 h-4 fill-current" viewBox="0 0 19 14">
@@ -408,7 +328,9 @@
               aria-label="Show emojis"
             >
               <svg class="fill-current h-6 w-6" viewBox="0 0 16 16">
-                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path
+                  d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"
+                />
                 <path
                   d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"
                 />
@@ -536,7 +458,9 @@
                 </div>
                 <div class="flex flex-col justify-center">
                   <h2 class="text-sm font-bold">Leena Hannan</h2>
-                  <p class="text-xs text-gray-400 font-normal">last seen 40 minutes ago</p>
+                  <p class="text-xs text-gray-400 font-normal">
+                    last seen 40 minutes ago
+                  </p>
                 </div>
               </li>
               <li class="flex flex-row my-3">
@@ -549,19 +473,31 @@
                 </div>
                 <div class="flex flex-col justify-center">
                   <h2 class="text-sm font-bold">Yaeko Lindblom</h2>
-                  <p class="text-xs text-gray-400 font-normal">last seen 40 minutes ago</p>
+                  <p class="text-xs text-gray-400 font-normal">
+                    last seen 40 minutes ago
+                  </p>
                 </div>
               </li>
             </ul>
           </div>
           <div class="">
-            <ul class="flex flex-row justify-between items-center bg-gray-50 rounded-lg p-1">
-              <li class="bg-white px-3 py-1 text-xs font-semibold rounded-md cursor-pointer">
+            <ul
+              class="flex flex-row justify-between items-center bg-gray-50 rounded-lg p-1"
+            >
+              <li
+                class="bg-white px-3 py-1 text-xs font-semibold rounded-md cursor-pointer"
+              >
                 Media
               </li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Links</li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Files</li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Voice</li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Links
+              </li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Files
+              </li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Voice
+              </li>
             </ul>
             <ul class="grid grid-cols-3 gap-2 my-3">
               <li class="">
@@ -599,22 +535,26 @@
     </section>
   </div>
 </template>
+<script setup lang="ts">
+import NavButton from "@/components/sidenav/NavButton.vue";
+import SearchBox from "@/components/contacts/SearchBox.vue";
+import UserCard from "@/components/contacts/UserCard.vue";
+import { ref } from "vue";
+import type { User } from "@/types";
+let search = ref('');
 
-<style>
-body {
-  background: url('https://i.redd.it/iibrptucse951.png');
-  background-repeat: no-repeat;
-  background-size: cover;
+const user: User = {
+  id: 1,
+  username: "jdo",
+  fullName: "John Doe",
+  profileImage: "https://i.pravatar.cc/150?img=68",
+  status: "online"
 }
-
+</script>
+<style>
 section {
   height: 80vh;
 }
 
-.search-input {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' d='M18.109,17.776l-3.082-3.081c-0.059-0.059-0.135-0.077-0.211-0.087c1.373-1.38,2.221-3.28,2.221-5.379c0-4.212-3.414-7.626-7.625-7.626c-4.212,0-7.626,3.414-7.626,7.626s3.414,7.627,7.626,7.627c1.918,0,3.665-0.713,5.004-1.882c0.006,0.085,0.033,0.17,0.098,0.234l3.082,3.081c0.143,0.142,0.371,0.142,0.514,0C18.25,18.148,18.25,17.918,18.109,17.776zM9.412,16.13c-3.811,0-6.9-3.089-6.9-6.9c0-3.81,3.089-6.899,6.9-6.899c3.811,0,6.901,3.09,6.901,6.899C16.312,13.041,13.223,16.13,9.412,16.13z'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: left 0.75rem center;
-  background-size: 0.9rem 1.25rem;
-}
+
 </style>
