@@ -6,9 +6,10 @@
       <fa-icon class="h-7 w-7" :icon="['fas', props.icon]" />
 
       <p class="text-xs font-semibold"><slot></slot></p>
-      <span v-if="props.badge > 0"
+      <span
+        v-if="props.badge > 0"
         class="bg-blue-600 w-4 h-4 text-xs rounded-full text-white font-semibold absolute right-3 top-1"
-        >{{props.badge}}</span
+        >{{ props.badge }}</span
       >
     </button>
   </li>
@@ -31,10 +32,10 @@ const props = defineProps({
 </script>
 <style scoped>
 .active {
-    @apply my-2 text-gray-900
+  @apply my-2 text-gray-900;
 }
 
 .active > button {
-    @apply bg-gray-600 bg-opacity-10
+  @apply bg-gray-600 bg-opacity-10;
 }
 </style>

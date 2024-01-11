@@ -11,11 +11,7 @@
         <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
           ><fa-icon class="text-gray-400" :icon="['fas', 'key']"></fa-icon
         ></span>
-        <input
-          type="password"
-          placeholder="Password"
-          v-model="credentials.password"
-        />
+        <input type="password" placeholder="Password" v-model="credentials.password" />
       </div>
       <input
         v-if="!loginForm"
@@ -54,9 +50,7 @@
       <button
         v-if="!loginForm"
         @click="register"
-        :disabled="
-          credentials.password.length < 5 || credentials.password != confirmPassword
-        "
+        :disabled="credentials.password.length < 5 || credentials.password != confirmPassword"
         class="btn w-full"
         type="button"
       >
