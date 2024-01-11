@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="tsx">
 import { type User } from '@/types'
 import { computed, type PropType } from 'vue'
 
@@ -21,15 +21,77 @@ const props = defineProps({
   }
 })
 
-const avatar = computed(() => {
-  if (props.user.profileImage) {
-    return `data:image/jpeg;base64,${props.user.profileImage}`
+const emit = defineEmits(['click'])
+
+function shash(s: String) {
+  let char, i
+  let hash = 0
+
+  if (s.length == 0) return hash
+
+  for (i = 0; i < s.length; i++) {
+    char = s.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
   }
 
-  return props.user.fullName
+  return hash
+}
+
+const twColors = [
+  'slate',
+  'gray',
+  'zinc',
+  'neutral',
+  'stone',
+  'red',
+  'orange',
+  'amber',
+  'yellow',
+  'lime',
+  'green',
+  'emerald',
+  'teal',
+  'cyan',
+  'sky',
+  'blue',
+  'indigo',
+  'violet',
+  'purple',
+  'fuchsia',
+  'pink',
+  'rose'
+]
+
+const getInitials = (name: String) => {
+  return name
     .split(' ')
-    .map((word) => word.charAt(0).toUpperCase())
+    .map((name) => name.charAt(0).toUpperCase())
     .join('')
+}
+
+const avatar = computed(() => {
+  const initials = getInitials(props.user?.fullName || props.user.username)
+  if (props.user?.profileImage?.length > 0) {
+    return (
+      <img
+        src={`data:image/jpeg;base64,${props.user.profileImage}`}
+        class="h-12 w-12 rounded-full mr-4"
+        alt="User Picture"
+      />
+    )
+  } else {
+    const color =
+      twColors[Math.abs(shash(props.user?.fullName || props.user.username)) % twColors.length]
+
+    return (
+      <div
+        class={`h-12 w-12 rounded-full mr-4 flex flex-row justify-center items-center bg-${color}-500`}
+      >
+        <p class="text-white text-xl font-bold">{initials}</p>
+      </div>
+    )
+  }
 })
 
 const status = computed(() => {
@@ -59,15 +121,27 @@ const status = computed(() => {
 </script>
 <template>
   <li
+    @click="emit('click', props.user)"
     class="my-2 p-2 flex flex-row cursor-pointer rounded-lg"
     :class="props.active ? 'active' : 'default'"
   >
     <div class="relative">
-      <img
+      <avatar></avatar>
+      <!-- <img
+        v-if="props.user.profileImage.length > 0"
         :src="`data:image/jpeg;base64,${props.user.profileImage}`"
         class="h-12 w-12 rounded-full mr-4"
-        alt=""
+        alt="User Picture"
       />
+      <div
+        v-else
+        class="h-12 w-12 rounded-full mr-4 bg-gray-300 flex flex-row justify-center items-center"
+      >
+        <p class="text-white text-xl">
+          {{ initials }}
+        </p>
+      </div> -->
+
       <!-- status indicator -->
       <fa-icon
         :icon="status.icon"
@@ -77,7 +151,7 @@ const status = computed(() => {
     </div>
     <div class="w-full flex flex-col justify-center">
       <div class="flex flex-row justify-between items-center">
-        <h2 class="text-xs font-bold">{{ props.user.fullName }}</h2>
+        <h2 class="text-xs font-bold">{{ props.user?.fullName || props.user.username }}</h2>
         <div class="text-xs flex flex-row">
           <fa-icon :icon="['fas', 'check-double']" class="text-current mr-1" />
           <span class="text-current"> 10:45 </span>

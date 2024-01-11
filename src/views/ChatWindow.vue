@@ -9,6 +9,7 @@
       >
         <div class="flex-auto flex flex-col">
           <div class="flex-auto flex flex-row">
+            <!-- [+] navigation -->
             <div class="p-1 flex flex-col justify-between items-center">
               <div class="">
                 <div class="p-1 flex justify-center items-center text-gray-500 cursor-pointer">
@@ -30,130 +31,24 @@
                 <nav-button icon="gear">Settings</nav-button>
               </ul>
             </div>
+            <!-- [-] navigation -->
+            <!-- [+] user list -->
             <div class="w-full p-1">
               <search-box v-model="search"></search-box>
               <ul class="overflow-y-auto">
-                <user-card :user="user"></user-card>
-                <user-card :user="user" active></user-card>
-                <li
-                  class="my-2 p-2 flex flex-row cursor-pointer rounded-lg hover:bg-gray-50 hover:bg-opacity-50"
-                >
-                  <img
-                    src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-997145684-1547233351.jpg?crop=1xw:1xh;center,top&resize=480:*"
-                    class="h-12 w-12 rounded-full mr-4"
-                    alt=""
-                  />
-                  <div class="w-full flex flex-col justify-center">
-                    <div class="flex flex-row justify-between items-center">
-                      <h2 class="text-xs font-bold">Benjamin Julien</h2>
-                      <div class="text-xs flex flex-row">
-                        <svg class="w-4 h-4 text-blue-600 fill-current mr-1" viewBox="0 0 19 14">
-                          <path
-                            fill-rule="nonzero"
-                            d="M4.96833846,10.0490996 L11.5108251,2.571972 C11.7472185,2.30180819 12.1578642,2.27443181 12.428028,2.51082515 C12.6711754,2.72357915 12.717665,3.07747757 12.5522007,3.34307913 L12.4891749,3.428028 L5.48917485,11.428028 C5.2663359,11.6827011 4.89144111,11.7199091 4.62486888,11.5309823 L4.54038059,11.4596194 L1.54038059,8.45961941 C1.2865398,8.20577862 1.2865398,7.79422138 1.54038059,7.54038059 C1.7688373,7.31192388 2.12504434,7.28907821 2.37905111,7.47184358 L2.45961941,7.54038059 L4.96833846,10.0490996 L11.5108251,2.571972 L4.96833846,10.0490996 Z M9.96833846,10.0490996 L16.5108251,2.571972 C16.7472185,2.30180819 17.1578642,2.27443181 17.428028,2.51082515 C17.6711754,2.72357915 17.717665,3.07747757 17.5522007,3.34307913 L17.4891749,3.428028 L10.4891749,11.428028 C10.2663359,11.6827011 9.89144111,11.7199091 9.62486888,11.5309823 L9.54038059,11.4596194 L8.54038059,10.4596194 C8.2865398,10.2057786 8.2865398,9.79422138 8.54038059,9.54038059 C8.7688373,9.31192388 9.12504434,9.28907821 9.37905111,9.47184358 L9.45961941,9.54038059 L9.96833846,10.0490996 L16.5108251,2.571972 L9.96833846,10.0490996 Z"
-                          ></path>
-                        </svg>
-                        <span class="text-gray-400"> 10:45 </span>
-                      </div>
-                    </div>
-                    <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">On projection apartments unsatiable...</p>
-                      <span
-                        class="text-sm bg-blue-500 rounded-full w-5 h-5 text-center text-white font-bold"
-                        >4</span
-                      >
-                    </div>
-                  </div>
-                </li>
-                <li class="my-2 p-2 flex flex-row bg-blue-500 rounded-lg cursor-pointer">
-                  <img src="https://i.pravatar.cc/128" class="h-12 w-12 rounded-full mr-4" alt="" />
-                  <div class="w-full flex flex-col justify-center text-white">
-                    <div class="flex flex-row justify-between">
-                      <h2 class="text-xs font-bold">Food porn group</h2>
-                      <span class="text-xs">10:45</span>
-                    </div>
-                    <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs">There are many variations of passages...</p>
-                    </div>
-                  </div>
-                </li>
-                <li
-                  class="my-2 p-2 flex flex-row cursor-pointer rounded-lg hover:bg-gray-50 hover:bg-opacity-50"
-                >
-                  <img
-                    class="w-12 h-12 mr-4 rounded-full"
-                    src="https://www.telegraph.co.uk/multimedia/archive/03249/archetypal-female-_3249633c.jpg"
-                    alt=""
-                  />
-                  <div class="w-full flex flex-col justify-center">
-                    <div class="flex flex-row justify-between">
-                      <h2 class="text-xs font-bold">Angela Vang</h2>
-                      <div class="text-xs flex flex-row">
-                        <svg class="w-4 h-4 text-blue-600 fill-current mr-1" viewBox="0 0 20 20">
-                          <path
-                            d="M7.629,14.566c0.125,0.125,0.291,0.188,0.456,0.188c0.164,0,0.329-0.062,0.456-0.188l8.219-8.221c0.252-0.252,0.252-0.659,0-0.911c-0.252-0.252-0.659-0.252-0.911,0l-7.764,7.763L4.152,9.267c-0.252-0.251-0.66-0.251-0.911,0c-0.252,0.252-0.252,0.66,0,0.911L7.629,14.566z"
-                          ></path>
-                        </svg>
-                        <span class="text-gray-400"> 10:45 </span>
-                      </div>
-                    </div>
-                    <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">Sudden looked elinor off gay estate...</p>
-                    </div>
-                  </div>
-                </li>
-                <li
-                  class="my-2 p-2 flex flex-row cursor-pointer rounded-lg hover:bg-gray-50 hover:bg-opacity-50"
-                >
-                  <img
-                    class="w-12 h-12 mr-4 rounded-full"
-                    src="https://wallstreetinsanity.com/wp-content/uploads/This-Survey-Shows-Us-How-Different-Men-And-Women-View-The-Perfect-Female-Face-.jpg"
-                    alt=""
-                  />
-                  <div class="w-full flex flex-col justify-center">
-                    <div class="flex flex-row justify-between">
-                      <h2 class="text-xs font-bold">Olivia</h2>
-                      <div class="text-xs flex flex-row">
-                        <span class="text-gray-400"> 10:45 </span>
-                      </div>
-                    </div>
-                    <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">Breakfast agreeable incommode depar...</p>
-                    </div>
-                  </div>
-                </li>
-                <li
-                  class="my-2 p-2 flex flex-row cursor-pointer rounded-lg hover:bg-gray-50 hover:bg-opacity-50"
-                >
-                  <img
-                    class="w-12 h-12 mr-4 rounded-full"
-                    src="https://www.statnews.com/wp-content/uploads/2018/01/AdobeStock_107381486-645x645.jpeg"
-                    alt=""
-                  />
-                  <div class="w-full flex flex-col justify-center">
-                    <div class="flex flex-row justify-between">
-                      <h2 class="text-xs font-bold">Yaeko Lindblom</h2>
-                      <div class="text-xs flex flex-row">
-                        <svg class="w-4 h-4 text-blue-600 fill-current mr-1" viewBox="0 0 19 14">
-                          <path
-                            fill-rule="nonzero"
-                            d="M4.96833846,10.0490996 L11.5108251,2.571972 C11.7472185,2.30180819 12.1578642,2.27443181 12.428028,2.51082515 C12.6711754,2.72357915 12.717665,3.07747757 12.5522007,3.34307913 L12.4891749,3.428028 L5.48917485,11.428028 C5.2663359,11.6827011 4.89144111,11.7199091 4.62486888,11.5309823 L4.54038059,11.4596194 L1.54038059,8.45961941 C1.2865398,8.20577862 1.2865398,7.79422138 1.54038059,7.54038059 C1.7688373,7.31192388 2.12504434,7.28907821 2.37905111,7.47184358 L2.45961941,7.54038059 L4.96833846,10.0490996 L11.5108251,2.571972 L4.96833846,10.0490996 Z M9.96833846,10.0490996 L16.5108251,2.571972 C16.7472185,2.30180819 17.1578642,2.27443181 17.428028,2.51082515 C17.6711754,2.72357915 17.717665,3.07747757 17.5522007,3.34307913 L17.4891749,3.428028 L10.4891749,11.428028 C10.2663359,11.6827011 9.89144111,11.7199091 9.62486888,11.5309823 L9.54038059,11.4596194 L8.54038059,10.4596194 C8.2865398,10.2057786 8.2865398,9.79422138 8.54038059,9.54038059 C8.7688373,9.31192388 9.12504434,9.28907821 9.37905111,9.47184358 L9.45961941,9.54038059 L9.96833846,10.0490996 L16.5108251,2.571972 L9.96833846,10.0490996 Z"
-                          ></path>
-                        </svg>
-                        <span class="text-gray-400"> 10:45 </span>
-                      </div>
-                    </div>
-                    <div class="flex flex-row justify-between items-center">
-                      <p class="text-xs text-gray-500">New the her nor case that lady paid...</p>
-                      <span
-                        class="text-sm bg-blue-500 rounded-full w-5 h-5 text-center text-white font-bold"
-                        >1</span
-                      >
-                    </div>
-                  </div>
-                </li>
+                <user-card
+                  @click="openChat"
+                  v-for="user in users"
+                  :key="user.id"
+                  :user="user"
+                  :status-text="conversations[user.username]?.messages[0]?.message"
+                  :active="
+                    activeConvo !== null && conversations[user.username]?.id === activeConvo?.id
+                  "
+                ></user-card>
               </ul>
             </div>
+            <!-- [-] user list -->
           </div>
         </div>
       </div>
@@ -333,14 +228,6 @@
           </button>
         </header>
         <main>
-          <div class="flex flex-col justify-center items-center my-4">
-            <img
-              src="https://t.aimg.sk/magaziny/Ts0fWXOKR12frPTjZ3a8UA~Prav-burger-dom-ca-buchta.png?t=LzB4MzU6NTg2eDM2NS85MjB4NzYwL3NtYXJ0L2ZpbHRlcnM6Zm9ybWF0KGpwZWcp&h=aSkfJNypYaRvL4kRNsFH8g&e=2145916800&v=5"
-              class="w-32 h-32 mb-4 rounded-full"
-              alt=""
-            />
-            <h2 class="font-bold text-gray-700">Food porn group</h2>
-          </div>
           <div class="my-6">
             <ul class="flex flex-row justify-center items-center">
               <li>
@@ -493,16 +380,42 @@
 import NavButton from '@/components/sidenav/NavButton.vue'
 import SearchBox from '@/components/contacts/SearchBox.vue'
 import UserCard from '@/components/contacts/UserCard.vue'
-import { ref } from 'vue'
-import type { User } from '@/types'
-let search = ref('')
+import { useAPI } from '@/composables/api'
 
-const user: User = {
-  id: 1,
-  username: 'jdo',
-  fullName: 'John Doe',
-  profileImage: 'https://i.pravatar.cc/150?img=68',
-  status: 'online'
+import { inject, ref, unref } from 'vue'
+import type { Auth, Conversation, User } from '@/types'
+const search = ref('')
+const users = ref<User[]>([])
+
+const auth: Auth = unref(inject('auth', {} as Auth))
+
+const { api } = useAPI('http://127.0.0.1:8080', auth.token)
+
+api.getUsers().then((res) => {
+  users.value = res
+})
+
+const conversations = ref<Record<string, Conversation>>({})
+api.getDirectMessages().then((res) => {
+  res.forEach((user) => {
+    api.getConversation(user.username).then((convo) => {
+      conversations.value[user.username] = convo
+    })
+  })
+})
+
+const activeConvo = ref<Conversation | null>(null)
+const openChat = async (user: User) => {
+  console.log('Opening chat with', user)
+
+  const res = await api.getConversation(user.username)
+  if (res?.exists) {
+    conversations.value[user.username] = res
+  } else {
+    const convo = await api.createConversation(user.username)
+    conversations.value[user.username] = convo
+  }
+  activeConvo.value = conversations.value[user.username]
 }
 </script>
 <style>
