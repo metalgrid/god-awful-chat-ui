@@ -11,8 +11,8 @@
     </div>
     <div class="flex-1 px-3">
       <input
-        v-model="model"
-        @keyup.enter="console.log('implement emit message')"
+        v-model="text"
+        @keyup.enter="sendMessage"
         type="text"
         class="w-full border-2 border-gray-100 rounded-xl px-4 py-1 outline-none text-gray-500 focus:outline-none focus:ring"
         placeholder="Write a message..."
@@ -37,12 +37,37 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineEmits, inject } from "vue";
-const model = defineModel();
-const auth = inject<Auth>("auth");
+let text;
+import { defineEmits, inject, unref } from "vue";
+const auth = unref(inject<Auth>("auth"));
+const convo = unref(inject<Conversation>("activeConvo"));
+
+// const formatDate = (date: Date) => {
+//   // Format the date and time in a short format
+//   const options = {
+//     year: "numeric",
+//     month: "numeric",
+//     day: "numeric",
+//     hour: "2-digit",
+//     minute: "2-digit",
+//   };
+
+//   const formattedDateTime = date.toLocaleString(undefined, options);
+
+//   return formattedDateTime;
+// };
 
 const emit = defineEmits<{
   message: (message: Message) => void;
 }>();
+
+const sendMessage = () => {
+    if (text.trim().length === 0) return;
+    emit('message', {
+        message: text.trim(),
+        senderName: auth.user.name,
+        conversationId: convo.id,
+    })
+}
 
 </script>

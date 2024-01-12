@@ -113,7 +113,7 @@
           </div>
         </div>
         <!-- Input for writing a messages -->
-        <message-box></message-box>
+        <message-box @message="console.log"></message-box>
       </div>
       <!-- Right section -->
       <div class="hidden w-2/6 xl:block bg-white rounded-r-md p-5 overflow-y-auto">
@@ -286,7 +286,7 @@ import Message from '@/components/messages/Message.vue'
 import MessageBox from '@/components/messages/MessageBox.vue'
 import { useAPI } from '@/composables/api'
 
-import { inject, ref, unref } from 'vue'
+import { inject, ref, unref, provide } from 'vue'
 import type { Auth, Conversation, User } from '@/types'
 const search = ref('')
 const users = ref<User[]>([])
@@ -309,6 +309,7 @@ api.getDirectMessages().then((res) => {
 })
 
 const activeConvo = ref<Conversation & User | null>(null)
+provide('activeConvo', activeConvo);
 const openChat = async (user: User) => {
   console.log('Opening chat with', user)
 
