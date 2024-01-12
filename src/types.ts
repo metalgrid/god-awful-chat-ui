@@ -37,4 +37,11 @@ interface Conversation {
   messages: Message[]
 }
 
-export type { Role, Authority, User, Auth, Message, Conversation }
+interface MessageRequest {
+  conversationId: number
+  message: string
+  senderName: string
+  receiverName: string | null
+}
+
+export type { Role, Authority, User, Auth, Message, Conversation, MessageRequest }

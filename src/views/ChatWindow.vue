@@ -41,10 +41,8 @@
                   v-for="user in users"
                   :key="user.id"
                   :user="user"
-                  :status-text="conversations[user.username]?.messages[0]?.message"
-                  :active="
-                    activeConvo !== null && user.username === activeConvo.username
-                  "
+                  :status-text="conversations[user.username]?.messages?.[0]?.message"
+                  :active="activeConvo !== null && user.username === activeConvo.username"
                 ></user-card>
               </ul>
             </div>
@@ -109,11 +107,16 @@
         <!-- Messages -->
         <div class="flex-auto flex flex-col justify-between overflow-y-auto">
           <div class="flex flex-col">
-            <message v-for="msg in activeConvo?.messages" :key="msg.id" :local="msg.user.username == auth.user.username">{{ msg.message }}</message>
+            <message
+              v-for="msg in activeConvo?.messages"
+              :key="msg.id"
+              :local="msg.user.username == auth.user.username"
+              :message="msg"
+            ></message>
           </div>
         </div>
         <!-- Input for writing a messages -->
-        <message-box @message="console.log"></message-box>
+        <message-box @message="sendMessage"></message-box>
       </div>
       <!-- Right section -->
       <div class="hidden w-2/6 xl:block bg-white rounded-r-md p-5 overflow-y-auto">
@@ -287,7 +290,7 @@ import MessageBox from '@/components/messages/MessageBox.vue'
 import { useAPI } from '@/composables/api'
 
 import { inject, ref, unref, provide } from 'vue'
-import type { Auth, Conversation, User } from '@/types'
+import type { Auth, Conversation, MessageRequest, User } from '@/types'
 const search = ref('')
 const users = ref<User[]>([])
 
@@ -308,8 +311,8 @@ api.getDirectMessages().then((res) => {
   })
 })
 
-const activeConvo = ref<Conversation & User | null>(null)
-provide('activeConvo', activeConvo);
+const activeConvo = ref<(Conversation & User) | null>(null)
+provide('activeConvo', activeConvo)
 const openChat = async (user: User) => {
   console.log('Opening chat with', user)
 
@@ -320,7 +323,11 @@ const openChat = async (user: User) => {
     const convo = await api.createConversation(user.username)
     conversations.value[user.username] = convo
   }
-  activeConvo.value = {...conversations.value[user.username], ...user}
+  activeConvo.value = { ...conversations.value[user.username], ...user }
+}
+
+const sendMessage = async (message: MessageRequest) => {
+  api.sendMessage(message)
 }
 </script>
 <style>

@@ -37,10 +37,11 @@
   </div>
 </template>
 <script setup lang="ts">
-let text;
-import { defineEmits, inject, unref } from "vue";
-const auth = unref(inject<Auth>("auth"));
-const convo = unref(inject<Conversation>("activeConvo"));
+import type { Auth, Conversation, MessageRequest, User } from '@/types'
+import { defineEmits, inject, ref, unref, type Ref } from 'vue'
+const auth = unref(inject<Auth>('auth'))
+const convo = inject<Ref<Conversation & User>>('activeConvo')
+const text = ref('')
 
 // const formatDate = (date: Date) => {
 //   // Format the date and time in a short format
@@ -58,16 +59,19 @@ const convo = unref(inject<Conversation>("activeConvo"));
 // };
 
 const emit = defineEmits<{
-  message: (message: Message) => void;
-}>();
+  message: [MessageRequest]
+}>()
 
 const sendMessage = () => {
-    if (text.trim().length === 0) return;
-    emit('message', {
-        message: text.trim(),
-        senderName: auth.user.name,
-        conversationId: convo.id,
-    })
-}
+  if (text.value.trim().length === 0) return
+  if (!convo) return
 
+  emit('message', {
+    message: text.value.trim(),
+    senderName: auth!.user.username,
+    conversationId: convo.value.id,
+    receiverName: convo.value.public ? null : convo.value.username
+  })
+  text.value = ''
+}
 </script>
