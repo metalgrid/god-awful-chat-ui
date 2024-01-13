@@ -44,3 +44,11 @@ const props = defineProps<{
   badge: number;
 }>();
 </script>
+<style scoped>
+.default {
+  @apply hover:bg-gray-50 hover:bg-opacity-50;
+}
+.active {
+  @apply bg-blue-500 text-white;
+}
+</style>

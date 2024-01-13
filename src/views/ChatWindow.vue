@@ -44,12 +44,13 @@
                   @click="
                     () => {
                       openConvo(chat);
-                    }"
+                    }
+                  "
                   v-for="chat in publicChats"
                   :key="chat.id"
                   :conversation="chat"
-                  :active="activeConvo !== null && chat.username === activeConvo.username"
-                  :badge="1"
+                  :active="activeConvo !== null && chat.id === activeConvo.id"
+                  :badge="unreads[chat.id]"
                 ></chat-room>
                 <user-card
                   @click="
@@ -127,7 +128,7 @@
           </div>
         </div>
         <!-- Messages -->
-        <div ref="msgBox" class="flex-auto flex flex-col justify-between overflow-y-auto">
+        <div ref="msgbox" class="flex-auto flex flex-col justify-between overflow-y-auto">
           <div class="flex flex-col">
             <message
               v-for="msg in activeConvo?.messages"
@@ -334,7 +335,7 @@ import MessageBox from "@/components/messages/MessageBox.vue";
 import Profile from "@/components/profile/Profile.vue";
 import { useAPI } from "@/composables/api";
 
-import { inject, ref, unref, provide, computed, onMounted } from "vue";
+import { inject, ref, unref, provide, computed, onMounted, nextTick } from "vue";
 import type { Auth, Conversation, MessageRequest, User } from "@/types";
 import type { IMessage } from "@stomp/stompjs";
 const search = ref("");
@@ -379,21 +380,32 @@ api.onDirectMessage((message: IMessage) => {
     unreads.value[msg.username] += 1;
   }
 
-  if (activeConvo.value?.username === msg.username) {
-    api.getConversation(msg.username).then((res) => {
+  if (activeConvo.value?.id === msg.conversationId) {
+    api.getConversationById(msg.conversationId).then((res) => {
       activeConvo.value!.messages = res.messages;
       conversations.value[msg.username] = res;
     });
-    if (msgbox.value) {
-      msgbox.value.scrollTop = msgbox.value.scrollHeight;
-    }
   }
+  nextTick(() => {
+    msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
+  });
 });
 
 api.onPublicMessage((message: IMessage) => {
   const msg = JSON.parse(message.body);
-  api.getConversationById(msg.conversationId).then((res) => {
-    activeConvo.value!.messages = res.messages;
+  if (activeConvo.value?.id == msg.conversationId) {
+    api.getConversationById(msg.conversationId).then((res) => {
+      activeConvo.value!.messages = res.messages;
+    });
+  } else {
+    if (!unreads.value[msg.conversationId]) {
+      unreads.value[msg.conversationId] = 0;
+    }
+
+    unreads.value[msg.conversationId] += 1;
+  }
+  nextTick(() => {
+    msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
   });
 });
 
@@ -407,6 +419,7 @@ api.getDirectMessages().then((res) => {
   res.forEach((user) => {
     api.getConversation(user.username).then((convo) => {
       conversations.value[user.username] = convo;
+      unreads.value[user.username] = 0;
     });
   });
 });
@@ -415,6 +428,7 @@ api.getPublicChats().then((res) => {
   res.forEach((convo) => {
     if (convo.public) {
       publicChats.value.push(convo);
+      unreads.value[convo.id] = 0;
       conversations.value[convo.username] = convo;
       return;
     }
@@ -425,12 +439,15 @@ api.getPublicChats().then((res) => {
 });
 
 const openConvo = async (convo: Conversation) => {
-  const update = await api.getConversationById(convo.id)
-  activeConvo.value = {...auth.user, ...update};
-}
+  const update = await api.getConversationById(convo.id);
+  activeConvo.value = { ...auth.user, ...update };
+  unreads.value[convo.id] = 0;
+
+  await nextTick();
+  msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
+};
 
 const openChat = async (user: User) => {
-
   const res = await api.getConversation(user.username);
   if (res?.exists) {
     conversations.value[user.username] = res;
@@ -440,17 +457,14 @@ const openChat = async (user: User) => {
   }
   activeConvo.value = { ...user, ...conversations.value[user.username] };
   unreads.value[user.username] = 0;
+
+  await nextTick();
+  msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
 };
 
 const sendMessage = async (message: MessageRequest) => {
   if (!activeConvo.value) {
     return;
-  }
-
-  
-
-  if (msgbox.value) {
-    msgbox.value.scrollTop = msgbox.value.scrollHeight;
   }
 
   api.sendMessage(message);
