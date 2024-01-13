@@ -1,5 +1,5 @@
 import type { Conversation, Message, MessageRequest, User } from '@/types'
-import { Stomp } from '@stomp/stompjs'
+import { Stomp, type IMessage, type messageCallbackType } from '@stomp/stompjs'
 
 export interface ApiMethods {
   // Define the methods you want to expose for API calls
@@ -7,15 +7,19 @@ export interface ApiMethods {
   getMessages: (convId: number) => Promise<Message[]>
   getConversation: (username: String) => Promise<Conversation>
   getDirectMessages: () => Promise<User[]>
+  getPublicChats: () => Promise<Conversation[]>
   createConversation: (username: String) => Promise<Conversation>
   sendMessage(message: MessageRequest): void
-  on(event: string, callback: (message: Message) => void): void
+  // subscribe(pub: Boolean, callback: (message: Message) => void): void
+  onConnected: (callback: (message: IMessage) => void) => void
 }
 
 export function useAPI(url: string, token: string): { api: ApiMethods } {
   const urlObj = new URL(url)
   const stompClient = Stomp.client(`ws://${urlObj.host}/ws-native`)
   let connected = false
+
+  const stompCallbacks: messageCallbackType[] = []
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -57,6 +61,17 @@ export function useAPI(url: string, token: string): { api: ApiMethods } {
       return await response.json()
     },
 
+    getPublicChats: async () => {
+      const response = await fetch(`${url}/api/v1/conversations/public`, {
+        headers
+      })
+
+      if (!response.ok) {
+        throw new Error('Unable to fetch public chats')
+      }
+      return await response.json()
+    },
+
     getConversation: async (username: String) => {
       const response = await fetch(
         `${url}/api/v1/conversations/participants/${username}/messages`,
@@ -90,24 +105,23 @@ export function useAPI(url: string, token: string): { api: ApiMethods } {
       stompClient.send(`/app/${dest}`, {}, JSON.stringify(message))
     },
 
-    on: (event: string, callback: (message: Message) => void) => {
-      switch (event) {
-        case 'public':
-          stompClient.subscribe(`/chatroom/public`, (message) => {
-            callback(JSON.parse(message.body))
-          })
-          break
-        default:
-          stompClient.subscribe(`/user/${event}/private`, (message) => {
-            callback(JSON.parse(message.body))
-          })
-          break
+    onConnected: (callback: (message: IMessage) => void) => {
+      if (connected) {
+        console.log("Subscribing to '/topic/public'")
+        stompClient.subscribe('/topic/public', callback, {})
+      } else {
+        console.log('Deferring subscription')
+        stompCallbacks.push(callback)
       }
     }
   }
 
   stompClient.connect({}, () => {
     connected = true
+    stompCallbacks.forEach((cb) => {
+      console.log("Subscribing to '/topic/public'")
+      stompClient.subscribe('/topic/public', cb, {})
+    })
   })
 
   return { api }

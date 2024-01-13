@@ -1,6 +1,12 @@
 <template>
   <div class="element flex flex-row items-center justify-center">
-    <form @keyup.enter="login">
+    <form @keyup.enter="loginForm ? login : register">
+      <div v-if="!loginForm" class="w-full relative">
+      <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
+          ><fa-icon class="text-gray-400" :icon="['fas', 'id-card']"></fa-icon
+        ></span>
+        <input type="text" placeholder="Full Name" v-model="fullName" />
+      </div>
       <div class="w-full relative">
         <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
           ><fa-icon class="text-gray-400" :icon="['fas', 'user']"></fa-icon
@@ -13,13 +19,16 @@
         ></span>
         <input type="password" placeholder="Password" v-model="credentials.password" />
       </div>
-      <input
-        v-if="!loginForm"
-        class="w-full"
-        type="password"
-        placeholder="Confirm Password"
-        v-model="confirmPassword"
-      />
+      <div v-if="!loginForm" class="w-full relative">
+        <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
+          ><fa-icon class="text-gray-400" :icon="['fas', 'key']"></fa-icon
+        ></span>
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          v-model="confirmPassword"
+        />
+      </div>
 
       <div
         v-if="error"
@@ -66,25 +75,28 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { Auth } from '@/types'
+import type { Auth, LoginRequest } from '@/types'
 import { ref, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const auth: Ref<Auth> = inject('auth', {} as Ref<Auth>)
 const error = ref('')
 const loginForm = ref(true)
+const fullName = ref('')
 
 const router = useRouter()
 
-const credentials = ref({
+const credentials: Ref<LoginRequest> = ref({
   username: '',
   password: ''
 })
+
 const confirmPassword = ref('')
 
 const login = async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/auth', {
+    const response = await fetch('http://192.168.100.69:8080/api/v1/auth', {
+    // const response = await fetch('http://127.0.0.1:8080/api/v1/auth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -111,12 +123,13 @@ const login = async () => {
 
 const register = async () => {
   try {
-    const response = await fetch('http://localhost:8080/api/v1/users', {
+    const response = await fetch('http://192.168.100.69:8080/api/v1/users', {
+    // const response = await fetch('http://127.0.0.1:8080/api/v1/users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(credentials.value)
+      body: JSON.stringify({ ...credentials.value, fullName: fullName.value })
     })
 
     switch (response.status) {

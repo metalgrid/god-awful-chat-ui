@@ -12,7 +12,9 @@
             <!-- [+] navigation -->
             <div class="p-1 flex flex-col justify-between items-center">
               <div class="">
-                <div class="p-1 flex justify-center items-center text-gray-500 cursor-pointer">
+                <div
+                  class="p-1 flex justify-center items-center text-gray-500 cursor-pointer"
+                >
                   <button
                     class="flex flex-col justify-center items-center w-full p-1 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
                     aria-label="Hamburger menu"
@@ -37,7 +39,12 @@
               <search-box v-model="search"></search-box>
               <ul class="overflow-y-auto">
                 <user-card
-                  @click="openChat"
+                  @click="
+                    () => {
+                      console.log('clicked', user);
+                      openChat(user);
+                    }
+                  "
                   v-for="user in users"
                   :key="user.id"
                   :user="user"
@@ -59,7 +66,9 @@
           class="flex flex-row items-center justify-between px-3 py-2 bg-gray-50 bg-opacity-40 border-b-2 border-gray-100"
         >
           <div class="">
-            <h2 class="font-medium">{{ activeConvo?.username }}</h2>
+            <h2 class="font-medium">
+              {{ activeConvo?.fullName || activeConvo?.username }}
+            </h2>
             <p class="text-xs text-gray-500">{{ activeConvo?.status }}</p>
           </div>
           <div class="flex flex-row">
@@ -218,7 +227,9 @@
                 </div>
                 <div class="flex flex-col justify-center">
                   <h2 class="text-sm font-bold">Leena Hannan</h2>
-                  <p class="text-xs text-gray-400 font-normal">last seen 40 minutes ago</p>
+                  <p class="text-xs text-gray-400 font-normal">
+                    last seen 40 minutes ago
+                  </p>
                 </div>
               </li>
               <li class="flex flex-row my-3">
@@ -231,19 +242,31 @@
                 </div>
                 <div class="flex flex-col justify-center">
                   <h2 class="text-sm font-bold">Yaeko Lindblom</h2>
-                  <p class="text-xs text-gray-400 font-normal">last seen 40 minutes ago</p>
+                  <p class="text-xs text-gray-400 font-normal">
+                    last seen 40 minutes ago
+                  </p>
                 </div>
               </li>
             </ul>
           </div>
           <div class="">
-            <ul class="flex flex-row justify-between items-center bg-gray-50 rounded-lg p-1">
-              <li class="bg-white px-3 py-1 text-xs font-semibold rounded-md cursor-pointer">
+            <ul
+              class="flex flex-row justify-between items-center bg-gray-50 rounded-lg p-1"
+            >
+              <li
+                class="bg-white px-3 py-1 text-xs font-semibold rounded-md cursor-pointer"
+              >
                 Media
               </li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Links</li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Files</li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Voice</li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Links
+              </li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Files
+              </li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Voice
+              </li>
             </ul>
             <ul class="grid grid-cols-3 gap-2 my-3">
               <li class="">
@@ -280,55 +303,81 @@
       </div>
     </section>
   </div>
+ 
+        
 </template>
 <script setup lang="ts">
-import NavButton from '@/components/sidenav/NavButton.vue'
-import SearchBox from '@/components/contacts/SearchBox.vue'
-import UserCard from '@/components/contacts/UserCard.vue'
-import Message from '@/components/messages/Message.vue'
-import MessageBox from '@/components/messages/MessageBox.vue'
-import { useAPI } from '@/composables/api'
+import NavButton from "@/components/sidenav/NavButton.vue";
+import SearchBox from "@/components/contacts/SearchBox.vue";
+import UserCard from "@/components/contacts/UserCard.vue";
+import Message from "@/components/messages/Message.vue";
+import MessageBox from "@/components/messages/MessageBox.vue";
+import { useAPI } from "@/composables/api";
 
-import { inject, ref, unref, provide } from 'vue'
-import type { Auth, Conversation, MessageRequest, User } from '@/types'
-const search = ref('')
-const users = ref<User[]>([])
+import { inject, ref, unref, provide } from "vue";
+import type { Auth, Conversation, MessageRequest, User } from "@/types";
+const search = ref("");
+const users = ref<User[]>([]);
 
-const auth: Auth = unref(inject('auth', {} as Auth))
+const auth: Auth = unref(inject("auth", {} as Auth));
 
-const { api } = useAPI('http://127.0.0.1:8080', auth.token)
+// const { api } = useAPI("http://127.0.0.1:8080", auth.token);
+const { api } = useAPI("http://192.168.100.69:8080", auth.token);
+
 
 api.getUsers().then((res) => {
-  users.value = res
-})
+  users.value = res;
+});
 
-const conversations = ref<Record<string, Conversation>>({})
+api.onConnected(() => {
+  api.getUsers().then((res) => {
+    users.value = res;
+  });
+});
+
+const conversations = ref<Record<string, Conversation>>({});
 api.getDirectMessages().then((res) => {
   res.forEach((user) => {
     api.getConversation(user.username).then((convo) => {
-      conversations.value[user.username] = convo
-    })
-  })
-})
+      conversations.value[user.username] = convo;
+    });
+  });
+});
 
-const activeConvo = ref<(Conversation & User) | null>(null)
-provide('activeConvo', activeConvo)
+api.getPublicChats().then((res) => {
+  res.forEach((convo) => {
+    if (convo.public) {
+      conversations.value[convo.username] = convo;
+      return;
+    }
+    api.getConversation(convo.username).then((convo) => {
+      conversations.value[convo.username] = convo;
+    });
+  });
+});
+
+const activeConvo = ref<(Conversation & User) | null>(null);
+provide("activeConvo", activeConvo);
+
 const openChat = async (user: User) => {
-  console.log('Opening chat with', user)
+  console.log("Opening chat with", user);
 
-  const res = await api.getConversation(user.username)
+  const res = await api.getConversation(user.username);
+  console.log("Conversation result", res);
   if (res?.exists) {
-    conversations.value[user.username] = res
+    conversations.value[user.username] = res;
   } else {
-    const convo = await api.createConversation(user.username)
-    conversations.value[user.username] = convo
+    const convo = await api.createConversation(user.username);
+    console.log("Created new conversation", convo);
+    conversations.value[user.username] = convo;
   }
-  activeConvo.value = { ...conversations.value[user.username], ...user }
-}
+  activeConvo.value = { ...user, ...conversations.value[user.username] };
+  console.log("Active conversation is", activeConvo.value);
+};
 
 const sendMessage = async (message: MessageRequest) => {
-  api.sendMessage(message)
-}
+  api.sendMessage(message);
+};
 </script>
 <style>
 section {

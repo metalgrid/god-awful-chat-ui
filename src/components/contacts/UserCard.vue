@@ -76,7 +76,7 @@ const avatar = computed(() => {
     return (
       <img
         src={`data:image/jpeg;base64,${props.user.profileImage}`}
-        class="h-12 w-12 rounded-full mr-4"
+        class="h-12 w-12 rounded-full mr-4 border-white border-2"
         alt="User Picture"
       />
     )
@@ -86,7 +86,7 @@ const avatar = computed(() => {
 
     return (
       <div
-        class={`h-12 w-12 rounded-full mr-4 flex flex-row justify-center items-center bg-${color}-500`}
+        class={`h-12 w-12 rounded-full mr-4 flex flex-row justify-center items-center bg-${color}-500 border-white border-2`}
       >
         <p class="text-white text-xl font-bold">{initials}</p>
       </div>

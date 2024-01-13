@@ -7,6 +7,17 @@ type Authority = {
   authority: Role
 }
 
+interface LoginRequest {
+  username: string
+  password: string
+}
+
+interface RegistrationRequest {
+  username: string
+  password: string
+  fullName: string
+}
+
 interface User {
   id: number
   username: string
@@ -44,4 +55,14 @@ interface MessageRequest {
   receiverName: string | null
 }
 
-export type { Role, Authority, User, Auth, Message, Conversation, MessageRequest }
+export type {
+  Role,
+  Authority,
+  User,
+  Auth,
+  Message,
+  Conversation,
+  MessageRequest,
+  LoginRequest,
+  RegistrationRequest
+}
