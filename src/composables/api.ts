@@ -1,10 +1,10 @@
-import type { Conversation, Message, MessageRequest, User } from '@/types'
+import type { Conversation, MessageRequest, User } from '@/types'
 import { Stomp, type IMessage, type messageCallbackType } from '@stomp/stompjs'
 
 export interface ApiMethods {
   // Define the methods you want to expose for API calls
   getUsers: () => Promise<User[]>
-  getMessages: (convId: number) => Promise<Message[]>
+  getConversationById: (convId: number) => Promise<Conversation>
   getConversation: (username: String) => Promise<Conversation>
   getDirectMessages: () => Promise<User[]>
   getPublicChats: () => Promise<Conversation[]>
@@ -12,15 +12,21 @@ export interface ApiMethods {
   sendMessage(message: MessageRequest): void
   updateUser: (user: User) => Promise<User>
   updateUserImage: (formData: FormData) => Promise<Object>
-  // subscribe(pub: Boolean, callback: (message: Message) => void): void
   onConnected: (callback: (message: IMessage) => void) => void
   onPublicMessage: (callback: (message: IMessage) => void) => void
   onDirectMessage: (callback: (message: IMessage) => void) => void
 }
 
+declare global {
+  export interface Window {
+    api: ApiMethods
+  }
+}
+
 export function useAPI(url: string, username: string, token: string): { api: ApiMethods } {
   const urlObj = new URL(url)
   const stompClient = Stomp.client(`ws://${urlObj.host}/ws-native`)
+  stompClient.debug = () => {}
   let connected = false
 
   const stompCallbacks: Record<string, messageCallbackType> = {}
@@ -43,7 +49,7 @@ export function useAPI(url: string, username: string, token: string): { api: Api
       return data?.content
     },
 
-    getMessages: async (convId: number) => {
+    getConversationById: async (convId: number): Promise<Conversation> => {
       const response = await fetch(`${url}/api/v1/conversations/${convId}/messages`, {
         headers
       })
@@ -108,7 +114,6 @@ export function useAPI(url: string, username: string, token: string): { api: Api
     sendMessage: async (message: MessageRequest) => {
       // If payload has a receiverName, it's a private conversation - route to the private-message endpoint.
       const dest = message?.receiverName ? 'private-message' : 'message'
-      console.log('Sending DM to', dest, message)
       stompClient.send(`/app/${dest}`, {}, JSON.stringify(message))
     },
 
@@ -142,17 +147,14 @@ export function useAPI(url: string, username: string, token: string): { api: Api
 
     onConnected: (callback: (message: IMessage) => void) => {
       if (connected) {
-        console.log("Subscribing to '/topic/public'")
         stompClient.subscribe('/topic/public', callback, {})
-      } else {
-        console.log('Deferring subscription')
-        stompCallbacks['/topic/public'] = callback
+        return
       }
+      stompCallbacks['/topic/public'] = callback
     },
 
     onPublicMessage: (callback: (message: IMessage) => void) => {
       if (connected) {
-        console.log("Subscribing to '/chatroom/public'")
         stompClient.subscribe('/chatroom/public', callback, {})
         return
       }
@@ -160,7 +162,6 @@ export function useAPI(url: string, username: string, token: string): { api: Api
     },
 
     onDirectMessage: (callback: (message: IMessage) => void) => {
-      console.log(`Subscribing to '/user/${username}/private'`)
       if (connected) {
         stompClient.subscribe(`/user/${username}/private`, callback, {})
         return
@@ -172,10 +173,11 @@ export function useAPI(url: string, username: string, token: string): { api: Api
   stompClient.connect({}, () => {
     connected = true
     Object.entries(stompCallbacks).forEach(([topic, cb]) => {
-      console.log(`Subscribing to '${topic}'`)
       stompClient.subscribe(topic, cb, {})
     })
   })
+
+  window.api = api
 
   return { api }
 }

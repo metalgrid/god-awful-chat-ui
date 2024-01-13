@@ -158,7 +158,7 @@ const status = computed(() => {
         </div>
       </div>
       <div v-if="props.statusText" class="flex flex-row justify-between items-center">
-        <p class="text-xs text-current">{{ props.statusText }}</p>
+        <p class="text-xs text-current truncate">{{ props.statusText }}</p>
         <span
           v-if="props.badge > 0"
           class="text-sm bg-blue-500 rounded-full w-5 h-5 text-center text-white font-bold"

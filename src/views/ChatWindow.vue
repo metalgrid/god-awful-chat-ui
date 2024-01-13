@@ -12,7 +12,9 @@
             <!-- [+] navigation -->
             <div class="p-1 flex flex-col justify-between items-center">
               <div class="">
-                <div class="p-1 flex justify-center items-center text-gray-500 cursor-pointer">
+                <div
+                  class="p-1 flex justify-center items-center text-gray-500 cursor-pointer"
+                >
                   <button
                     class="flex flex-col justify-center items-center w-full p-1 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
                     aria-label="Hamburger menu"
@@ -21,7 +23,9 @@
                   </button>
                 </div>
                 <ul class="">
-                  <nav-button icon="comments" :badge="allUnreads" active>All chats</nav-button>
+                  <nav-button icon="comments" :badge="allUnreads" active
+                    >All chats</nav-button
+                  >
                   <nav-button icon="comment-dots">Unread</nav-button>
                   <nav-button icon="address-card">Personal</nav-button>
                   <nav-button icon="sliders">Edit</nav-button>
@@ -36,11 +40,21 @@
             <div class="w-full p-1">
               <search-box v-model="search"></search-box>
               <ul class="overflow-y-auto">
+                <chat-room
+                  @click="
+                    () => {
+                      openConvo(chat);
+                    }"
+                  v-for="chat in publicChats"
+                  :key="chat.id"
+                  :conversation="chat"
+                  :active="activeConvo !== null && chat.username === activeConvo.username"
+                  :badge="1"
+                ></chat-room>
                 <user-card
                   @click="
                     () => {
-                      console.log('clicked', user)
-                      openChat(user)
+                      openChat(user);
                     }
                   "
                   v-for="user in users"
@@ -226,7 +240,9 @@
                 </div>
                 <div class="flex flex-col justify-center">
                   <h2 class="text-sm font-bold">Leena Hannan</h2>
-                  <p class="text-xs text-gray-400 font-normal">last seen 40 minutes ago</p>
+                  <p class="text-xs text-gray-400 font-normal">
+                    last seen 40 minutes ago
+                  </p>
                 </div>
               </li>
               <li class="flex flex-row my-3">
@@ -239,19 +255,31 @@
                 </div>
                 <div class="flex flex-col justify-center">
                   <h2 class="text-sm font-bold">Yaeko Lindblom</h2>
-                  <p class="text-xs text-gray-400 font-normal">last seen 40 minutes ago</p>
+                  <p class="text-xs text-gray-400 font-normal">
+                    last seen 40 minutes ago
+                  </p>
                 </div>
               </li>
             </ul>
           </div>
           <div class="">
-            <ul class="flex flex-row justify-between items-center bg-gray-50 rounded-lg p-1">
-              <li class="bg-white px-3 py-1 text-xs font-semibold rounded-md cursor-pointer">
+            <ul
+              class="flex flex-row justify-between items-center bg-gray-50 rounded-lg p-1"
+            >
+              <li
+                class="bg-white px-3 py-1 text-xs font-semibold rounded-md cursor-pointer"
+              >
                 Media
               </li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Links</li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Files</li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">Voice</li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Links
+              </li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Files
+              </li>
+              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
+                Voice
+              </li>
             </ul>
             <ul class="grid grid-cols-3 gap-2 my-3">
               <li class="">
@@ -297,159 +325,156 @@
   ></profile>
 </template>
 <script setup lang="ts">
-import NavButton from '@/components/sidenav/NavButton.vue'
-import SearchBox from '@/components/contacts/SearchBox.vue'
-import UserCard from '@/components/contacts/UserCard.vue'
-import Message from '@/components/messages/Message.vue'
-import MessageBox from '@/components/messages/MessageBox.vue'
-import Profile from '@/components/profile/Profile.vue'
-import { useAPI } from '@/composables/api'
+import NavButton from "@/components/sidenav/NavButton.vue";
+import SearchBox from "@/components/contacts/SearchBox.vue";
+import ChatRoom from "@/components/contacts/ChatRoom.vue";
+import UserCard from "@/components/contacts/UserCard.vue";
+import Message from "@/components/messages/Message.vue";
+import MessageBox from "@/components/messages/MessageBox.vue";
+import Profile from "@/components/profile/Profile.vue";
+import { useAPI } from "@/composables/api";
 
-import { inject, ref, unref, provide, computed, onMounted } from 'vue'
-import type { Auth, Conversation, MessageRequest, User } from '@/types'
-import type { IMessage } from '@stomp/stompjs'
-const search = ref('')
-const users = ref<User[]>([])
-const editProfile = ref(false)
+import { inject, ref, unref, provide, computed, onMounted } from "vue";
+import type { Auth, Conversation, MessageRequest, User } from "@/types";
+import type { IMessage } from "@stomp/stompjs";
+const search = ref("");
+const users = ref<User[]>([]);
+const publicChats = ref<Conversation[]>([]);
+const editProfile = ref(false);
 
-const msgbox = ref<HTMLDivElement | null>(null)
+const msgbox = ref<HTMLDivElement | null>(null);
 
-const auth: Auth = unref(inject('auth', {} as Auth))
+const auth: Auth = unref(inject("auth", {} as Auth));
 
-const unreads = ref<Record<string, number>>({})
+const unreads = ref<Record<string, number>>({});
 const allUnreads = computed(() => {
-  return Object.values(unreads.value).reduce((a, b) => a + b, 0)
-})
+  return Object.values(unreads.value).reduce((a, b) => a + b, 0);
+});
 
-// const { api } = useAPI("http://127.0.0.1:8080", auth.token);
-const { api } = useAPI('http://192.168.100.69:8080', auth.user.username, auth.token)
-const conversations = ref<Record<string, Conversation>>({})
-const activeConvo = ref<(Conversation & User) | null>(null)
+const { api } = useAPI(import.meta.env.VITE_API_URL, auth.user.username, auth.token);
+const conversations = ref<Record<string, Conversation>>({});
+const activeConvo = ref<(Conversation & User) | null>(null);
 
-provide('activeConvo', activeConvo)
+provide("activeConvo", activeConvo);
 
 // [+] WS Subscriptions
 api.onConnected((message: IMessage) => {
-  console.log('Connected', message)
   switch (message.body) {
-    case 'connected':
-    case 'disconnected':
+    case "connected":
+    case "disconnected":
       api.getUsers().then((res) => {
-        users.value = res
-      })
-      break
+        users.value = res;
+      });
+      break;
   }
-})
+});
 
 api.onDirectMessage((message: IMessage) => {
-  console.log('Direct message', message)
-  const msg = JSON.parse(message.body)
+  const msg = JSON.parse(message.body);
   if (!unreads.value[msg.username]) {
-    unreads.value[msg.username] = 0
+    unreads.value[msg.username] = 0;
   }
 
   if (![activeConvo.value?.username, auth.user.username].includes(msg.username)) {
-    console.log('Incoming message is not in the active chat, incrementing unread')
-    unreads.value[msg.username] += 1
+    unreads.value[msg.username] += 1;
   }
 
   if (activeConvo.value?.username === msg.username) {
-    console.log('Incoming message is in the active chat, updating messages')
     api.getConversation(msg.username).then((res) => {
-      console.log('setting active convo messages to', res.messages)
-      activeConvo.value!.messages = res.messages
-      conversations.value[msg.username] = res
-    })
+      activeConvo.value!.messages = res.messages;
+      conversations.value[msg.username] = res;
+    });
     if (msgbox.value) {
-      console.log('scrolling to bottom')
-      msgbox.value.scrollTop = msgbox.value.scrollHeight
+      msgbox.value.scrollTop = msgbox.value.scrollHeight;
     }
   }
-})
+});
 
 api.onPublicMessage((message: IMessage) => {
-  const msg = JSON.parse(message.body)
-  api.getMessages(msg.conversationId).then((res) => {
-    console.log(res)
-  })
-})
+  const msg = JSON.parse(message.body);
+  api.getConversationById(msg.conversationId).then((res) => {
+    activeConvo.value!.messages = res.messages;
+  });
+});
 
 // [-] WS Subscriptions
 
 api.getUsers().then((res) => {
-  users.value = res
-})
+  users.value = res;
+});
 
 api.getDirectMessages().then((res) => {
   res.forEach((user) => {
     api.getConversation(user.username).then((convo) => {
-      conversations.value[user.username] = convo
-    })
-  })
-})
+      conversations.value[user.username] = convo;
+    });
+  });
+});
 
 api.getPublicChats().then((res) => {
   res.forEach((convo) => {
     if (convo.public) {
-      conversations.value[convo.username] = convo
-      return
+      publicChats.value.push(convo);
+      conversations.value[convo.username] = convo;
+      return;
     }
     api.getConversation(convo.username).then((convo) => {
-      conversations.value[convo.username] = convo
-    })
-  })
-})
+      conversations.value[convo.username] = convo;
+    });
+  });
+});
+
+const openConvo = async (convo: Conversation) => {
+  const update = await api.getConversationById(convo.id)
+  activeConvo.value = {...auth.user, ...update};
+}
 
 const openChat = async (user: User) => {
-  console.log('Opening chat with', user)
 
-  const res = await api.getConversation(user.username)
-  console.log('Conversation result', res)
+  const res = await api.getConversation(user.username);
   if (res?.exists) {
-    conversations.value[user.username] = res
+    conversations.value[user.username] = res;
   } else {
-    const convo = await api.createConversation(user.username)
-    console.log('Created new conversation', convo)
-    conversations.value[user.username] = convo
+    const convo = await api.createConversation(user.username);
+    conversations.value[user.username] = convo;
   }
-  activeConvo.value = { ...user, ...conversations.value[user.username] }
-  console.log('Active conversation is', activeConvo.value)
-  unreads.value[user.username] = 0
-}
+  activeConvo.value = { ...user, ...conversations.value[user.username] };
+  unreads.value[user.username] = 0;
+};
 
 const sendMessage = async (message: MessageRequest) => {
   if (!activeConvo.value) {
-    return
+    return;
   }
+
+  
 
   if (msgbox.value) {
-    msgbox.value.scrollTop = msgbox.value.scrollHeight
+    msgbox.value.scrollTop = msgbox.value.scrollHeight;
   }
 
-  api.sendMessage(message)
-}
+  api.sendMessage(message);
+};
 
 const updateUser = async (user: User) => {
-  console.log('Updating user', user)
-  const res = await api.updateUser(user)
-  auth.user = res
-  editProfile.value = false
-}
+  const res = await api.updateUser(user);
+  auth.user = res;
+  editProfile.value = false;
+};
 
 const updateUserImage = async (fd: FormData) => {
-  console.log('Updating user image', fd)
-  await api.updateUserImage(fd)
+  await api.updateUserImage(fd);
   api.getUsers().then((res) => {
-    users.value = res
-  })
-}
+    users.value = res;
+  });
+};
 
 onMounted(() => {
-  const msgBox = document.getElementById('msgBox')
+  const msgBox = document.getElementById("msgBox");
   if (msgBox) {
-    msgBox.scrollTop = msgBox.scrollHeight
+    msgBox.scrollTop = msgBox.scrollHeight;
   }
-})
+});
 </script>
 <style>
 section {

@@ -38,25 +38,10 @@
 </template>
 <script setup lang="ts">
 import type { Auth, Conversation, MessageRequest, User } from '@/types'
-import { defineEmits, inject, ref, unref, type Ref } from 'vue'
+import { inject, ref, unref, type Ref } from 'vue'
 const auth = unref(inject<Auth>('auth'))
 const convo = inject<Ref<Conversation & User>>('activeConvo')
 const text = ref('')
-
-// const formatDate = (date: Date) => {
-//   // Format the date and time in a short format
-//   const options = {
-//     year: "numeric",
-//     month: "numeric",
-//     day: "numeric",
-//     hour: "2-digit",
-//     minute: "2-digit",
-//   };
-
-//   const formattedDateTime = date.toLocaleString(undefined, options);
-
-//   return formattedDateTime;
-// };
 
 const emit = defineEmits<{
   message: [MessageRequest]
@@ -64,6 +49,7 @@ const emit = defineEmits<{
 
 const sendMessage = () => {
   if (text.value.trim().length === 0) return
+  if (text.value.trim().length > 1000) return
   if (!convo) return
 
   emit('message', {

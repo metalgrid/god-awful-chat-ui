@@ -55,7 +55,9 @@
       <button
         v-if="!loginForm"
         @click="register"
-        :disabled="credentials.password.length < 5 || credentials.password != confirmPassword"
+        :disabled="
+          credentials.password.length < 5 || credentials.password != confirmPassword
+        "
         class="btn w-full"
         type="button"
       >
@@ -71,6 +73,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { setCookie } from '@/composables/cookies';
 import type { Auth, LoginRequest } from '@/types'
 import { ref, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -91,8 +94,7 @@ const confirmPassword = ref('')
 
 const login = async () => {
   try {
-    const response = await fetch('http://192.168.100.69:8080/api/v1/auth', {
-      // const response = await fetch('http://127.0.0.1:8080/api/v1/auth', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -103,6 +105,7 @@ const login = async () => {
     switch (response.status) {
       case 200:
         auth.value = await response.json()
+        setCookie('auth', auth.value, 1)
         router.push({ name: 'chat' })
         break
       case 401:
@@ -119,8 +122,7 @@ const login = async () => {
 
 const register = async () => {
   try {
-    const response = await fetch('http://192.168.100.69:8080/api/v1/users', {
-      // const response = await fetch('http://127.0.0.1:8080/api/v1/users', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

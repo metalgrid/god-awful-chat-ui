@@ -5,8 +5,9 @@ import {
   type RouteLocationNormalized
 } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import { inject, unref } from 'vue'
+import { inject, type Ref } from 'vue'
 import type { Auth } from '@/types'
+import { deleteCookie, getCookie } from '@/composables/cookies'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,25 +29,39 @@ const router = createRouter({
       meta: {
         public: true
       }
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
     }
   ]
 })
 
 router.beforeEach(
   (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
-    const auth: Auth = unref(inject('auth', {} as Auth))
+    const auth: Ref<Auth> = inject('auth', {} as Ref<Auth>)
     // Check if the route requires authentication
-    if (!to.meta.public && !auth.token) {
+    if (!to.meta.public && !auth.value.token) {
+      // load auth from local storage
+      // verify token is valid
+      const localAuth = getCookie('auth')
+      if (localAuth) {
+        fetch(`${import.meta.env.VITE_API_URL}/api/v1/conversations/messaged-participants`, {
+          headers: {
+            Authorization: `Bearer ${localAuth.token}`
+          }
+        })
+          .then((response) => {
+            if (response.ok) {
+              auth.value = localAuth
+              return next()
+            } else {
+              deleteCookie('auth')
+              next({ name: 'login' })
+            }
+          })
+          .catch(() => {
+            deleteCookie('auth')
+            next({ name: 'login' })
+          })
+      }
       // Redirect to login if not authenticated
-      next({ name: 'login' })
     } else {
       // Continue navigation
       next()
