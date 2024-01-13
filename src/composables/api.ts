@@ -177,7 +177,5 @@ export function useAPI(url: string, username: string, token: string): { api: Api
     })
   })
 
-  window.api = api
-
   return { api }
 }

@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="fixed inset-0 bg-gray-900 bg-opacity-50 flex flex-col justify-center items-center"
-  >
+  <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex flex-col justify-center items-center">
     <div class="element flex flex-col items-center justify-center">
       <div class="ml-12 w-full">
         <h2 class="text-lg text-gray-500">
@@ -9,11 +7,7 @@
         </h2>
       </div>
       <div class="flex flex-col justify-center items-center">
-        <img
-          class="w-24 h-24 rounded-full"
-          :src="avatar"
-          alt="avatar"
-        />
+        <img class="w-24 h-24 rounded-full" :src="avatar" alt="avatar" />
         <p class="font-bold justify-center">{{ userProfile.fullName }}</p>
       </div>
       <div class="w-full relative">
@@ -65,57 +59,55 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { User } from "@/types";
-import { ref } from "vue";
-const passwordFocused = ref(false);
-const props = defineProps<{ user: User }>();
-const avatar = ref('');
-const fd = new FormData();
+import type { User } from '@/types'
+import { ref } from 'vue'
+const passwordFocused = ref(false)
+const props = defineProps<{ user: User }>()
+const avatar = ref('')
+const fd = new FormData()
 const userProfile = ref<User>({
   id: props.user.id,
   fullName: props.user.fullName,
   username: props.user.username,
   profileImage: props.user.profileImage,
-  status: props.user.status,
-});
+  status: props.user.status
+})
 
 const password = ref({
-  oldPassword: "",
-  newPassword: "",
-});
+  oldPassword: '',
+  newPassword: ''
+})
 
-const emit = defineEmits(["close", "update:user", "update:avatar"]);
+const emit = defineEmits(['close', 'update:user', 'update:avatar'])
 
 const updateAvatar = (ev: Event) => {
-  
-  const newAvatar = (ev.target as HTMLInputElement).files?.item(0);
+  const newAvatar = (ev.target as HTMLInputElement).files?.item(0)
 
   if (newAvatar) {
-    fd.append("file", newAvatar);
+    fd.append('file', newAvatar)
   }
 
-  const reader = new FileReader();
-  reader.readAsDataURL(newAvatar as Blob);
+  const reader = new FileReader()
+  reader.readAsDataURL(newAvatar as Blob)
   reader.onload = () => {
-    avatar.value = reader.result as string;
-  };
+    avatar.value = reader.result as string
+  }
 }
 
 const updateProfile = () => {
-
   if (fd.has('file')) {
-    emit("update:avatar", fd);
+    emit('update:avatar', fd)
   }
 
   if (!!password.value.oldPassword && !!password.value.newPassword) {
-    emit ("update:user", {
+    emit('update:user', {
       ...userProfile.value,
       ...password.value
-    });
+    })
     return
   }
-  emit("update:user", userProfile.value);
-};
+  emit('update:user', userProfile.value)
+}
 </script>
 <style scoped>
 .element {

@@ -2,7 +2,7 @@
   <div class="element flex flex-row items-center justify-center">
     <form @keyup.enter="loginForm ? login : register">
       <div v-if="!loginForm" class="w-full relative">
-      <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
+        <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
           ><fa-icon class="text-gray-400" :icon="['fas', 'id-card']"></fa-icon
         ></span>
         <input type="text" placeholder="Full Name" v-model="fullName" />
@@ -23,11 +23,7 @@
         <span class="absolute left-3 top-1/2 transform -translate-y-1/2"
           ><fa-icon class="text-gray-400" :icon="['fas', 'key']"></fa-icon
         ></span>
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          v-model="confirmPassword"
-        />
+        <input type="password" placeholder="Confirm Password" v-model="confirmPassword" />
       </div>
 
       <div
@@ -96,7 +92,7 @@ const confirmPassword = ref('')
 const login = async () => {
   try {
     const response = await fetch('http://192.168.100.69:8080/api/v1/auth', {
-    // const response = await fetch('http://127.0.0.1:8080/api/v1/auth', {
+      // const response = await fetch('http://127.0.0.1:8080/api/v1/auth', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -124,7 +120,7 @@ const login = async () => {
 const register = async () => {
   try {
     const response = await fetch('http://192.168.100.69:8080/api/v1/users', {
-    // const response = await fetch('http://127.0.0.1:8080/api/v1/users', {
+      // const response = await fetch('http://127.0.0.1:8080/api/v1/users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
