@@ -23,14 +23,16 @@
                   </button>
                 </div>
                 <ul class="">
-                  <nav-button icon="comments" :badge="2" active>All chats</nav-button>
+                  <nav-button icon="comments" :badge="allUnreads" active
+                    >All chats</nav-button
+                  >
                   <nav-button icon="comment-dots">Unread</nav-button>
                   <nav-button icon="address-card">Personal</nav-button>
                   <nav-button icon="sliders">Edit</nav-button>
                 </ul>
               </div>
               <ul>
-                <nav-button icon="gear">Settings</nav-button>
+                <nav-button icon="gear" @click="editProfile = true">Settings</nav-button>
               </ul>
             </div>
             <!-- [-] navigation -->
@@ -50,6 +52,7 @@
                   :user="user"
                   :status-text="conversations[user.username]?.messages?.[0]?.message"
                   :active="activeConvo !== null && user.username === activeConvo.username"
+                  :badge="unreads[user.username]"
                 ></user-card>
               </ul>
             </div>
@@ -114,7 +117,7 @@
           </div>
         </div>
         <!-- Messages -->
-        <div class="flex-auto flex flex-col justify-between overflow-y-auto">
+        <div ref="msgBox" class="flex-auto flex flex-col justify-between overflow-y-auto">
           <div class="flex flex-col">
             <message
               v-for="msg in activeConvo?.messages"
@@ -303,8 +306,13 @@
       </div>
     </section>
   </div>
- 
-        
+  <profile
+    v-if="editProfile"
+    @close="editProfile = false"
+    @update:user="updateUser"
+    @update:avatar="updateUserImage"
+    :user="auth.user"
+  ></profile>
 </template>
 <script setup lang="ts">
 import NavButton from "@/components/sidenav/NavButton.vue";
@@ -312,30 +320,84 @@ import SearchBox from "@/components/contacts/SearchBox.vue";
 import UserCard from "@/components/contacts/UserCard.vue";
 import Message from "@/components/messages/Message.vue";
 import MessageBox from "@/components/messages/MessageBox.vue";
+import Profile from "@/components/profile/Profile.vue";
 import { useAPI } from "@/composables/api";
 
-import { inject, ref, unref, provide } from "vue";
+import { inject, ref, unref, provide, computed, onMounted } from "vue";
 import type { Auth, Conversation, MessageRequest, User } from "@/types";
+import type { IMessage } from "@stomp/stompjs";
 const search = ref("");
 const users = ref<User[]>([]);
+const editProfile = ref(false);
+
+const msgbox = ref<HTMLDivElement | null>(null);
 
 const auth: Auth = unref(inject("auth", {} as Auth));
 
-// const { api } = useAPI("http://127.0.0.1:8080", auth.token);
-const { api } = useAPI("http://192.168.100.69:8080", auth.token);
+const unreads = ref<Record<string, number>>({});
+const allUnreads = computed(() => {
+  return Object.values(unreads.value).reduce((a, b) => a + b, 0);
+});
 
+// const { api } = useAPI("http://127.0.0.1:8080", auth.token);
+const { api } = useAPI("http://192.168.100.69:8080", auth.user.username, auth.token);
+const conversations = ref<Record<string, Conversation>>({});
+const activeConvo = ref<(Conversation & User) | null>(null);
+
+provide("activeConvo", activeConvo);
+
+// [+] WS Subscriptions
+api.onConnected((message: IMessage) => {
+  console.log("Connected", message);
+  switch (message.body) {
+    case "connected":
+    case "disconnected":
+      api.getUsers().then((res) => {
+        users.value = res;
+      });
+      break;
+  }
+});
+
+api.onDirectMessage((message: IMessage) => {
+  console.log('Direct message', message)
+  const msg = JSON.parse(message.body);
+  if (!unreads.value[msg.username]) {
+    unreads.value[msg.username] = 0;
+  }
+
+  if (![activeConvo.value?.username, auth.user.username].includes(msg.username)) {
+    console.log("Incoming message is not in the active chat, incrementing unread")
+    unreads.value[msg.username] += 1;
+  }
+
+  if (activeConvo.value?.username === msg.username) {
+    console.log("Incoming message is in the active chat, updating messages")
+    api.getConversation(msg.username).then((res) => {
+      console.log("setting active convo messages to", res.messages);
+      activeConvo.value!.messages = res.messages;
+      conversations.value[msg.username] = res;
+    });
+    if (msgbox.value) {
+      console.log('scrolling to bottom')
+      msgbox.value.scrollTop = msgbox.value.scrollHeight;
+    }
+  }
+});
+
+api.onPublicMessage((message: IMessage) => {
+  const msg = JSON.parse(message.body);
+  api.getMessages(msg.conversationId).then((res) => {
+    console.log(res);
+  });
+});
+
+// [-] WS Subscriptions
 
 api.getUsers().then((res) => {
   users.value = res;
 });
 
-api.onConnected(() => {
-  api.getUsers().then((res) => {
-    users.value = res;
-  });
-});
-
-const conversations = ref<Record<string, Conversation>>({});
 api.getDirectMessages().then((res) => {
   res.forEach((user) => {
     api.getConversation(user.username).then((convo) => {
@@ -356,9 +418,6 @@ api.getPublicChats().then((res) => {
   });
 });
 
-const activeConvo = ref<(Conversation & User) | null>(null);
-provide("activeConvo", activeConvo);
-
 const openChat = async (user: User) => {
   console.log("Opening chat with", user);
 
@@ -373,11 +432,42 @@ const openChat = async (user: User) => {
   }
   activeConvo.value = { ...user, ...conversations.value[user.username] };
   console.log("Active conversation is", activeConvo.value);
+  unreads.value[user.username] = 0;
 };
 
 const sendMessage = async (message: MessageRequest) => {
+  if (!activeConvo.value) {
+    return;
+  }
+
+  if (msgbox.value) {
+    msgbox.value.scrollTop = msgbox.value.scrollHeight;
+  }
+
   api.sendMessage(message);
 };
+
+const updateUser = async (user: User) => {
+  console.log("Updating user", user);
+  const res = await api.updateUser(user);
+  auth.user = res;
+  editProfile.value = false;
+};
+
+const updateUserImage = async (fd: FormData) => {
+  console.log("Updating user image", fd);
+  await api.updateUserImage(fd);
+  api.getUsers().then((res) => {
+    users.value = res;
+  });
+};
+
+onMounted(() => {
+  const msgBox = document.getElementById("msgBox");
+  if (msgBox) {
+    msgBox.scrollTop = msgBox.scrollHeight;
+  }
+});
 </script>
 <style>
 section {

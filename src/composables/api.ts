@@ -10,16 +10,20 @@ export interface ApiMethods {
   getPublicChats: () => Promise<Conversation[]>
   createConversation: (username: String) => Promise<Conversation>
   sendMessage(message: MessageRequest): void
+  updateUser: (user: User) => Promise<User>
+  updateUserImage: (formData: FormData) => Promise<Object>
   // subscribe(pub: Boolean, callback: (message: Message) => void): void
   onConnected: (callback: (message: IMessage) => void) => void
+  onPublicMessage: (callback: (message: IMessage) => void) => void
+  onDirectMessage: (callback: (message: IMessage) => void) => void
 }
 
-export function useAPI(url: string, token: string): { api: ApiMethods } {
+export function useAPI(url: string, username: string, token: string): { api: ApiMethods } {
   const urlObj = new URL(url)
   const stompClient = Stomp.client(`ws://${urlObj.host}/ws-native`)
   let connected = false
 
-  const stompCallbacks: messageCallbackType[] = []
+  const stompCallbacks: Record<string, messageCallbackType> = {}
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -96,13 +100,44 @@ export function useAPI(url: string, token: string): { api: ApiMethods } {
       if (!response.ok) {
         throw new Error(`Unable to create conversation with ${username}`)
       }
-      return await response.json()
+      const convo = await response.json()
+      convo.username = username
+      return convo
     },
 
     sendMessage: async (message: MessageRequest) => {
       // If payload has a receiverName, it's a private conversation - route to the private-message endpoint.
       const dest = message?.receiverName ? 'private-message' : 'message'
+      console.log('Sending DM to', dest, message)
       stompClient.send(`/app/${dest}`, {}, JSON.stringify(message))
+    },
+
+    updateUserImage: async (formData: FormData) => {
+      const response = await fetch(`${url}/api/v1/images`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Unable to update user image')
+      }
+      return await response.json()
+    },
+
+    updateUser: async (user: User) => {
+      const response = await fetch(`${url}/api/v1/users/${user.id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(user)
+      })
+
+      if (!response.ok) {
+        throw new Error('Unable to update user')
+      }
+      return await response.json()
     },
 
     onConnected: (callback: (message: IMessage) => void) => {
@@ -111,18 +146,38 @@ export function useAPI(url: string, token: string): { api: ApiMethods } {
         stompClient.subscribe('/topic/public', callback, {})
       } else {
         console.log('Deferring subscription')
-        stompCallbacks.push(callback)
+        stompCallbacks['/topic/public'] = callback
       }
+    },
+
+    onPublicMessage: (callback: (message: IMessage) => void) => {
+      if (connected) {
+        console.log("Subscribing to '/chatroom/public'")
+        stompClient.subscribe('/chatroom/public', callback, {})
+        return
+      }
+      stompCallbacks['/chatroom/public'] = callback
+    },
+
+    onDirectMessage: (callback: (message: IMessage) => void) => {
+      console.log(`Subscribing to '/user/${username}/private'`)
+      if (connected) {
+        stompClient.subscribe(`/user/${username}/private`, callback, {})
+        return
+      }
+      stompCallbacks[`/user/${username}/private`] = callback
     }
   }
 
   stompClient.connect({}, () => {
     connected = true
-    stompCallbacks.forEach((cb) => {
-      console.log("Subscribing to '/topic/public'")
-      stompClient.subscribe('/topic/public', cb, {})
+    Object.entries(stompCallbacks).forEach(([topic, cb]) => {
+      console.log(`Subscribing to '${topic}'`)
+      stompClient.subscribe(topic, cb, {})
     })
   })
+
+  window.api = api
 
   return { api }
 }
