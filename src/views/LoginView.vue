@@ -104,7 +104,7 @@ const login = async () => {
       case 200:
         auth.value = await response.json()
         setCookie('auth', auth.value, 1)
-        router.push({ name: 'chat' })
+        router.push({ name: 'home' })
         break
       case 401:
         error.value = 'Invalid username/password'
