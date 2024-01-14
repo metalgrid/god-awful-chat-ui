@@ -4,7 +4,6 @@ import {
   type NavigationGuardNext,
   type RouteLocationNormalized
 } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { inject, type Ref } from 'vue'
 import type { Auth } from '@/types'
 import { deleteCookie, getCookie } from '@/composables/cookies'
@@ -15,11 +14,6 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/chat',
-      name: 'chat',
       component: () => import('../views/ChatWindow.vue')
     },
     {
