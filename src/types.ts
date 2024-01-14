@@ -61,6 +61,14 @@ interface UserStatusRequest {
   status: 'online' | 'dnd' | 'away' | 'offline'
 }
 
+interface MediaMessage {
+  id: number
+  type: 'image' | 'link' | 'file'
+  user: User
+  timestamp: string
+  content: any
+}
+
 export type {
   Role,
   Authority,
@@ -71,5 +79,6 @@ export type {
   MessageRequest,
   LoginRequest,
   RegistrationRequest,
-  UserStatusRequest
+  UserStatusRequest,
+  MediaMessage
 }

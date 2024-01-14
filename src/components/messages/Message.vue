@@ -4,18 +4,80 @@
   <avatar class="w-8 h-8" v-if="!local" :user="props.message.user"></avatar>
   </div>
     <div class="bg-gray-300 rounded-xl mb-2 p-3 relative min-w-16">
-      <p class="pb-3 pr-3 text-sm">
-        {{ props.message.message }}
-      </p>
+      <message-body></message-body>
       <span class="text-xs text-gray-500 absolute right-2 bottom-2">{{
         formatDateTime(props.message.timeStamp)
       }}</span>
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup lang="tsx">
+import { computed } from 'vue';
 import Avatar from '../contacts/Avatar.vue';
-import type { Message } from '@/types'
+import type { MediaMessage, Message } from '@/types'
+
+const emit = defineEmits<{
+  'media:link': [(message: MediaMessage) => void],
+  'media:image': [(message: MediaMessage) => void],
+  'media:file': [(message: MediaMessage) => void]
+}>()
+
+// const parseMessage = (message: Message) => {
+//   // Check if the message is an image
+//   if (message?.type == "image") {
+//     return renderImage(message);
+//   }
+//   return renderLinks(message);
+// };
+
+// const renderImage = (message: Message) => {
+//   if (message?.type == "image") {
+//     const img = `<img src="${message.message}" class="w-64" />`;
+//     emits("highlight", {
+//       timestamp: new Date(),
+//       type: "image",
+//       highlight: img,
+//       sender: props.message.user,
+//     });
+//     return img;
+//   }
+// };
+
+const messageBody = computed(() => {
+  const [linksFound, text] = renderLinks(props.message)
+  if (linksFound) {
+    // emit('media:link', {
+    //   timestamp: new Date(),
+    //   type: 'link',
+    //   highlight: text,
+    //   sender: props.message.user
+    // })
+    return <p class="pb-3 pr-3 text-sm" innerHTML={text}></p>
+  }
+  return <p class="pb-3 pr-3 text-sm">{text}</p>
+})
+
+const renderLinks = (message: Message): [number|undefined, string] => {
+  // Use a regular expression to match and replace links in the text
+  const linkRegex = /(https?:\/\/[^\s]+)/g;
+  let text = String(message.message);
+
+  const links = text.match(linkRegex);
+
+  links?.forEach((link) => {
+    const ahref = `<a class="font-medium text-blue-600 dark:text-blue-700 underline" href="${link}" target="_blank">${link}</a>`;
+    emit("media:link", {
+      id: message.id,
+      type: "link",
+      user: message.user,
+      timestamp: message.timeStamp,
+      content: ahref,
+    });
+    text = text.replace(link, ahref);
+  });
+
+  return [links?.length, text];
+};
 
 function formatDateTime(inputDateTime: string) {
   const messageDate = new Date(inputDateTime)
@@ -74,3 +136,4 @@ const props = defineProps<{
   @apply w-11/12;
 }
 </style>
+>

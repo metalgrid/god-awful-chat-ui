@@ -41,11 +41,7 @@
               <search-box v-model="search"></search-box>
               <ul class="overflow-y-auto">
                 <chat-room
-                  @click="
-                    () => {
-                      openConvo(chat);
-                    }
-                  "
+                  @click="openConvo(chat)"
                   v-for="chat in publicChats"
                   :key="chat.id"
                   :conversation="chat"
@@ -131,6 +127,12 @@
         <div ref="msgbox" class="flex-auto flex flex-col justify-between overflow-y-auto">
           <div class="flex flex-col">
             <message
+              @media:link="
+                (e) => {
+                  console.log(e);
+                  links.push(e);
+                }
+              "
               v-for="msg in activeConvo?.messages"
               :key="msg.id"
               :local="msg.user.username == auth.user.username"
@@ -142,103 +144,12 @@
         <message-box @message="sendMessage"></message-box>
       </div>
       <!-- Right section -->
-      <div class="hidden w-2/6 xl:block bg-white rounded-r-md p-5 overflow-y-auto">
-        <header class="flex flex-row justify-end items-center">
-          <button
-            type="button"
-            class="p-2 ml-2 text-gray-400 rounded-full hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring"
-          >
-            <svg class="fill-current h-6 w-6" viewBox="0 0 20 20">
-              <path
-                d="M15.898,4.045c-0.271-0.272-0.713-0.272-0.986,0l-4.71,4.711L5.493,4.045c-0.272-0.272-0.714-0.272-0.986,0s-0.272,0.714,0,0.986l4.709,4.711l-4.71,4.711c-0.272,0.271-0.272,0.713,0,0.986c0.136,0.136,0.314,0.203,0.492,0.203c0.179,0,0.357-0.067,0.493-0.203l4.711-4.711l4.71,4.711c0.137,0.136,0.314,0.203,0.494,0.203c0.178,0,0.355-0.067,0.492-0.203c0.273-0.273,0.273-0.715,0-0.986l-4.711-4.711l4.711-4.711C16.172,4.759,16.172,4.317,15.898,4.045z"
-              ></path>
-            </svg>
-          </button>
-        </header>
-        <main>
-          <div v-if="activeConvo?.username" class="my-4 flex flex-col items-center justify-center">
-            <avatar
-              class="w-24 h-24"
-              :user="(users.find(u => u.username === activeConvo?.username) as User)"
-            ></avatar>
-            <h2 class="text-center text-xl font-semibold">
-              {{ activeConvo?.fullName || activeConvo?.username }}
-            </h2>
-          </div>
-          <div class="my-6">
-            <ul class="flex flex-row justify-center items-center">
-              <li>
-                <button
-                  type="button"
-                  class="flex flex-col justify-center items-center p-2 m-2 w-16 h-16 text-gray-400 rounded-full hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring"
-                >
-                  <fa-icon class="h-6 w-6 mb-2" :icon="['fas', 'phone']"></fa-icon>
-                  <p class="text-xs font-semibold">Call</p>
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  class="flex flex-col justify-center items-center p-2 m-2 w-16 h-16 text-gray-400 rounded-full hover:text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring"
-                >
-                  <fa-icon class="h-6 w-6 mb-2" :icon="['fas', 'video']"></fa-icon>
-                  <p class="text-xs font-semibold">Video</p>
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div class="">
-            <ul
-              class="flex flex-row justify-between items-center bg-gray-50 rounded-lg p-1"
-            >
-              <li
-                class="bg-white px-3 py-1 text-xs font-semibold rounded-md cursor-pointer"
-              >
-                Media
-              </li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
-                Links
-              </li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
-                Files
-              </li>
-              <li class="text-xs text-gray-500 font-semibold px-3 py-1 cursor-pointer">
-                Voice
-              </li>
-            </ul>
-            <ul class="grid grid-cols-3 gap-2 my-3">
-              <li class="">
-                <img
-                  class="rounded-md"
-                  src="https://hips.hearstapps.com/ghk.h-cdn.co/assets/16/38/1474395998-ghk-0216-comfortfoodcover-meatballs.jpg?crop=0.856xw:0.571xh;0.0224xw,0.296xh&resize=640:*"
-                  alt=""
-                />
-              </li>
-              <li class="">
-                <img
-                  class="rounded-md"
-                  src="https://media.self.com/photos/5f189b76c58e27c99fbef9e3/1:1/w_768,c_limit/blackberry-vanilla-french-toast.jpg"
-                  alt=""
-                />
-              </li>
-              <li class="">
-                <img
-                  class="rounded-md"
-                  src="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/gettyimages-1036880806.jpg?crop=0.6666666666666666xw:1xh;center,top&resize=640:*"
-                  alt=""
-                />
-              </li>
-              <li class="">
-                <img
-                  class="rounded-md"
-                  src="https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg?quality=90&resize=700%2C636"
-                  alt=""
-                />
-              </li>
-            </ul>
-          </div>
-        </main>
-      </div>
+      <info-panel
+        :links="links"
+        :files="files"
+        :media="media"
+        :users="users"
+      ></info-panel>
     </section>
   </div>
   <profile
@@ -257,7 +168,7 @@ import UserCard from "@/components/contacts/UserCard.vue";
 import Message from "@/components/messages/Message.vue";
 import MessageBox from "@/components/messages/MessageBox.vue";
 import Profile from "@/components/profile/Profile.vue";
-import Avatar from "@/components/contacts/Avatar.vue";
+import InfoPanel from "@/components/infopanel/InfoPanel.vue";
 import { useAPI } from "@/composables/api";
 
 import { inject, ref, unref, provide, computed, onMounted, nextTick } from "vue";
@@ -267,6 +178,7 @@ import type {
   MessageRequest,
   User,
   Message as ChatMessage,
+  MediaMessage,
 } from "@/types";
 import type { IMessage } from "@stomp/stompjs";
 const search = ref("");
@@ -315,6 +227,7 @@ api.onDirectMessage((message: IMessage) => {
     api.getConversationById(msg.conversationId).then((res) => {
       activeConvo.value!.messages = res.messages;
       conversations.value[msg.username] = res;
+      links.value = [];
       nextTick(() => {
         msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
       });
@@ -373,8 +286,9 @@ const openConvo = async (convo: Conversation) => {
   const update = await api.getConversationById(convo.id);
   activeConvo.value = { ...auth.user, ...update };
   unreads.value[convo.id] = 0;
-
+  
   await nextTick();
+  [links.value, media.value, files.value] = [[], [], []];
   msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
 };
 
@@ -388,8 +302,9 @@ const openChat = async (user: User) => {
   }
   activeConvo.value = { ...user, ...conversations.value[user.username] };
   unreads.value[user.username] = 0;
-
+  
   await nextTick();
+  [links.value, media.value, files.value] = [[], [], []];
   msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
 };
 
@@ -428,6 +343,11 @@ onMounted(() => {
     msgbox.value.scrollTop = msgbox.value.scrollHeight;
   }
 });
+
+// Stuff for the info panel
+const links = ref<MediaMessage[]>([]);
+const media = ref<MediaMessage[]>([]);
+const files = ref<MediaMessage[]>([]);
 </script>
 <style>
 section {

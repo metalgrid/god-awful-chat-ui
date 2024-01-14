@@ -3,8 +3,8 @@ import type { User } from '@/types';
 import { computed } from 'vue';
 
 const props = defineProps<{
-    user: User
-}>()
+  user: User;
+}>();
 
 function shash(s: String) {
   let char, i
