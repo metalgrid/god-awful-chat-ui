@@ -16,6 +16,7 @@ export interface ApiMethods {
   onConnected: (callback: (message: IMessage) => void) => void
   onPublicMessage: (callback: (message: IMessage) => void) => void
   onDirectMessage: (callback: (message: IMessage) => void) => void
+  sendServiceMessage: (message: IMessage, headers: Record<string, any>) => void
 }
 
 declare global {
@@ -173,6 +174,10 @@ export function useAPI(url: string, username: string, token: string): { api: Api
 
     updateUserStatus: (status: UserStatusRequest) => {
       stompClient.send(`/topic/public`, {}, JSON.stringify({ status }))
+    },
+
+    sendServiceMessage: (message: IMessage, headers: Record<string, any>) => {
+      stompClient.send(`/topic/public`, headers, JSON.stringify(message))
     }
   }
 

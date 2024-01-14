@@ -123,6 +123,7 @@
             </button>
           </div>
         </div>
+        <call-window></call-window>
         <!-- Messages -->
         <div ref="msgbox" class="flex-auto flex flex-col justify-between overflow-y-auto">
           <div class="flex flex-col">
@@ -166,6 +167,7 @@ import Message from "@/components/messages/Message.vue";
 import MessageBox from "@/components/messages/MessageBox.vue";
 import Profile from "@/components/profile/Profile.vue";
 import InfoPanel from "@/components/infopanel/InfoPanel.vue";
+import CallWindow from "@/components/calls/CallWindow.vue";
 import { useAPI } from "@/composables/api";
 
 import { inject, ref, unref, provide, computed, onMounted, nextTick } from "vue";
