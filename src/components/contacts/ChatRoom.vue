@@ -35,9 +35,26 @@ import { computed } from "vue";
 const emit = defineEmits(["click"]);
 
 const statusText = computed(() => {
-  if (props.conversation.messages.length === 0) return null;
-  const mlen = props.conversation.messages.length - 1;
-  return props.conversation.messages[mlen];
+  if (props.conversation.messages?.length === 0) return null;
+  const lastIdx = props.conversation.messages.length - 1;
+  const msg = props.conversation.messages?.[lastIdx];
+  const from = msg.user.fullName || msg.user.username;
+  if (msg.message.startsWith("data:image/")) {
+    return {
+      ...msg,
+      message: `${from}: Sent an image`,
+    };
+  }
+  if (msg.message.length > 50) {
+    return {
+      ...msg,
+      message: `${from}: ${msg.message.substring(0, 50)}...`,
+    };
+  }
+  return {
+    ...msg,
+    message: `${from}: ${msg.message}`,
+  };
 });
 
 const props = defineProps<{

@@ -128,6 +128,8 @@
           <div class="flex flex-col">
             <message
               @media:link="links.push($event)"
+              @media:image="media.push($event)"
+              @media:file="files.push($event)"
               v-for="msg in activeConvo?.messages"
               :key="msg.id"
               :local="msg.user.username == auth.user.username"
@@ -224,6 +226,7 @@ api.onDirectMessage((message: IMessage) => {
       conversations.value[msg.username] = res;
       links.value = [];
       nextTick(() => {
+        [links.value, media.value, files.value] = [[], [], []];
         msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
       });
     });
@@ -236,6 +239,7 @@ api.onPublicMessage((message: IMessage) => {
     api.getConversationById(msg.conversationId).then((res) => {
       activeConvo.value!.messages = res.messages;
       nextTick(() => {
+        [links.value, media.value, files.value] = [[], [], []];
         msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
       });
     });
@@ -330,8 +334,24 @@ const getStatusText = (username: string): ChatMessage | undefined => {
     return undefined;
   }
 
+  if (conversations.value[username].messages?.length === 0) {
+    return undefined;
+  }
+
   const lastIdx = conversations.value[username].messages.length - 1;
-  return conversations.value[username]?.messages?.[lastIdx];
+  const msg = conversations.value[username]?.messages?.[lastIdx];
+  if (msg.message.startsWith("data:image/")) {
+    return {
+      ...msg,
+      message: "Sent an image",
+    };
+  }
+  if (msg.message.length > 100) {
+    return {
+      ...msg,
+      message: msg.message.substring(0, 100) + "...",
+    };
+  }
 };
 
 onMounted(() => {

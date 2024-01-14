@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row p-2" :class="local ? 'local' : 'remote'">
+  <div class="flex flex-row p-2 max-w-96" :class="local ? 'local' : 'remote'">
     <div class="flex flex-col justify-end">
       <avatar class="w-8 h-8" v-if="!local" :user="props.message.user"></avatar>
     </div>
@@ -44,6 +44,18 @@ const emit = defineEmits<{
 // };
 
 const messageBody = computed(() => {
+
+  if (props.message.message.startsWith("data:image/")) {
+    emit("media:image", {
+      id: props.message.id,
+      type: "image",
+      user: props.message.user,
+      timestamp: props.message.timeStamp,
+      content: props.message.message,
+    });
+    return <img src={props.message.message} class="w-64" />;
+  }
+
   const [linksFound, text] = renderLinks(props.message);
   if (linksFound) {
     // emit('media:link', {

@@ -26,14 +26,18 @@
       </li>
     </ul>
     <ul v-show="active === 'media'" class="grid grid-cols-3 gap-2 my-3">
-      <li class="" v-for="image in props.media" :key="image.id">
+      <li class="relative" v-for="image in props.media" :key="image.id">
         <img
-          class="rounded-md"
+          class="rounded-md w-48"
           :src="image.content"
           :alt="`Image from ${
             image.user?.fullName ? image.user.fullName : image.user.username
           }`"
         />
+        <!-- show the user's avatar as a badge on the image -->
+        <avatar
+          class="absolute bottom-0 right-0 w-8 h-8"
+          :user="image.user"></avatar>
       </li>
     </ul>
     <ul v-show="active === 'links'" class="flex flex-col gap-2 my-3">

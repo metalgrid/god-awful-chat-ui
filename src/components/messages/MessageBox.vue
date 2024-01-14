@@ -69,12 +69,10 @@ const emit = defineEmits<{
 
 const sendMessage = () => {
   if (!convo) return
-  if (text.value.trim().length === 0) return
-  if (text.value.trim().length > 1000) return
 
   while (media.value?.length > 0) {
     const item = media.value.shift()
-    console.log("media message", item?.type);
+    console.log("media message", item?.type, item?.content);
     
     emit('message', {
       message: item!.content!,
@@ -83,6 +81,9 @@ const sendMessage = () => {
       receiverName: convo.value.public ? null : convo.value.username,
     })
   }
+
+  if (text.value.trim().length === 0) return
+  if (text.value.trim().length > 1000) return
 
   emit('message', {
     message: text.value.trim(),
