@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <ul
-      class="flex flex-row space-x-2 justify-between items-center text-gray-500 bg-gray-50 rounded-lg p-1"
+      class="flex flex-row space-x-2 justify-between items-center text-gray-500 bg-gray-100 rounded-lg p-1"
     >
       <li
         @click="active = 'media'"
@@ -37,8 +37,15 @@
       </li>
     </ul>
     <ul v-show="active === 'links'" class="flex flex-col gap-2 my-3">
-      <li class="" v-for="link in props.links" :key="link.id">
-        <avatar class="w-8 h-8" :user="link.user"></avatar>
+      <li
+        class="rounded bg-gray-100 p-2 flex flex-col items-center justify-between"
+        v-for="link in props.links"
+        :key="link.id"
+      >
+        <div class="flex flex-row items-center w-full justify-between">
+          <avatar class="w-8 h-8" :user="link.user"></avatar>
+          <span class="text-xs text-gray-500">{{ formatDateTime(link.timestamp) }}</span>
+        </div>
         <p v-html="link.content"></p>
       </li>
     </ul>
@@ -61,6 +68,7 @@
 import { ref } from "vue";
 import type { MediaMessage } from "@/types";
 import Avatar from "../contacts/Avatar.vue";
+import { formatDateTime } from "@/composables/utils";
 
 const active = ref("");
 const props = defineProps<{

@@ -127,12 +127,7 @@
         <div ref="msgbox" class="flex-auto flex flex-col justify-between overflow-y-auto">
           <div class="flex flex-col">
             <message
-              @media:link="
-                (e) => {
-                  console.log(e);
-                  links.push(e);
-                }
-              "
+              @media:link="links.push($event)"
               v-for="msg in activeConvo?.messages"
               :key="msg.id"
               :local="msg.user.username == auth.user.username"
@@ -286,7 +281,7 @@ const openConvo = async (convo: Conversation) => {
   const update = await api.getConversationById(convo.id);
   activeConvo.value = { ...auth.user, ...update };
   unreads.value[convo.id] = 0;
-  
+
   await nextTick();
   [links.value, media.value, files.value] = [[], [], []];
   msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
@@ -302,7 +297,7 @@ const openChat = async (user: User) => {
   }
   activeConvo.value = { ...user, ...conversations.value[user.username] };
   unreads.value[user.username] = 0;
-  
+
   await nextTick();
   [links.value, media.value, files.value] = [[], [], []];
   msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
