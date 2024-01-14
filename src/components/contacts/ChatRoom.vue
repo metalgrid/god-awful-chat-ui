@@ -10,12 +10,13 @@
           {{ props.conversation.username }}
         </h2>
         <div class="text-xs flex flex-row">
-          <fa-icon :icon="['fas', 'check-double']" class="text-current mr-1" />
-          <span class="text-current"> 10:45 </span>
+          <span v-if="statusText?.timeStamp" class="text-current">
+            {{ formatDateTime(statusText?.timeStamp) }}
+          </span>
         </div>
       </div>
       <div v-if="statusText" class="flex flex-row justify-between items-center">
-        <p class="text-xs text-current truncate">{{ statusText }}</p>
+        <p class="text-xs text-current truncate">{{ statusText.message }}</p>
         <span
           v-if="props.badge > 0"
           class="text-sm bg-blue-500 rounded-full w-5 h-5 text-center text-white font-bold"
@@ -27,24 +28,28 @@
   </li>
 </template>
 <script setup lang="ts">
-import type { Conversation } from '@/types'
-import { computed } from 'vue'
+import { formatDateTime } from "@/composables/utils";
+import type { Conversation } from "@/types";
+import { computed } from "vue";
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(["click"]);
 
 const statusText = computed(() => {
-  if (props.conversation.messages.length === 0) return ''
-  const mlen = props.conversation.messages.length - 1
-  return props.conversation.messages[mlen].message
-})
+  if (props.conversation.messages.length === 0) return null;
+  const mlen = props.conversation.messages.length - 1;
+  return props.conversation.messages[mlen];
+});
 
 const props = defineProps<{
-  conversation: Conversation
-  active: boolean
-  badge: number
-}>()
+  conversation: Conversation;
+  active: boolean;
+  badge: number;
+}>();
 </script>
 <style scoped>
+* {
+  transition: none !important;
+}
 .default {
   @apply hover:bg-gray-50 hover:bg-opacity-50;
 }

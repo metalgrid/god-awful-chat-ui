@@ -1,5 +1,6 @@
 <script setup lang="tsx">
-import { type User } from '@/types'
+import { formatDateTime } from '@/composables/utils';
+import { type Message, type User } from '@/types'
 import { computed, type PropType } from 'vue'
 
 const props = defineProps({
@@ -16,8 +17,8 @@ const props = defineProps({
     default: false
   },
   statusText: {
-    type: String,
-    default: ''
+    type: Object as PropType<Message>,
+    default: null
   }
 })
 
@@ -151,14 +152,16 @@ const status = computed(() => {
     </div>
     <div class="w-full flex flex-col justify-center">
       <div class="flex flex-row justify-between items-center">
-        <h2 class="text-xs font-bold">{{ props.user?.fullName || props.user.username }}</h2>
+        <h2 class="text-xs font-bold">
+          {{ props.user?.fullName || props.user.username }}
+        </h2>
         <div class="text-xs flex flex-row">
-          <fa-icon :icon="['fas', 'check-double']" class="text-current mr-1" />
-          <span class="text-current"> 10:45 </span>
+          <!-- <fa-icon :icon="['fas', 'check-double']" class="text-current mr-1" /> -->
+          <span class="text-current"> {{ formatDateTime(props.statusText.timeStamp) }} </span>
         </div>
       </div>
       <div v-if="props.statusText" class="flex flex-row justify-between items-center">
-        <p class="text-xs text-current truncate">{{ props.statusText }}</p>
+        <p class="text-xs text-current truncate">{{ props.statusText.message }}</p>
         <span
           v-if="props.badge > 0"
           class="text-sm bg-blue-500 rounded-full w-5 h-5 text-center text-white font-bold"
@@ -169,6 +172,9 @@ const status = computed(() => {
   </li>
 </template>
 <style scoped>
+* {
+  transition: none !important;
+}
 .default {
   @apply hover:bg-gray-50 hover:bg-opacity-50;
 }
