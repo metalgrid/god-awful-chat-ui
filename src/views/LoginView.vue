@@ -55,9 +55,7 @@
       <button
         v-if="!loginForm"
         @click="register"
-        :disabled="
-          credentials.password.length < 5 || credentials.password != confirmPassword
-        "
+        :disabled="credentials.password.length < 5 || credentials.password != confirmPassword"
         class="btn w-full"
         type="button"
       >
@@ -73,7 +71,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { setCookie } from '@/composables/cookies';
+import { setCookie } from '@/composables/cookies'
 import type { Auth, LoginRequest } from '@/types'
 import { ref, inject, type Ref } from 'vue'
 import { useRouter } from 'vue-router'

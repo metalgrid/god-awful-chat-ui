@@ -1,6 +1,9 @@
 <template>
   <div class="flex flex-row p-2" :class="local ? 'local' : 'remote'">
-    <div class="bg-gray-300 rounded-xl mb-2 p-3 relative">
+  <div class="flex flex-col justify-end">
+  <avatar class="w-8 h-8" v-if="!local" :user="props.message.user"></avatar>
+  </div>
+    <div class="bg-gray-300 rounded-xl mb-2 p-3 relative min-w-16">
       <p class="pb-3 pr-3 text-sm">
         {{ props.message.message }}
       </p>
@@ -11,6 +14,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import Avatar from '../contacts/Avatar.vue';
 import type { Message } from '@/types'
 
 function formatDateTime(inputDateTime: string) {

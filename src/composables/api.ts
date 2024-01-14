@@ -1,5 +1,5 @@
-import type { Conversation, MessageRequest, User } from '@/types'
-import { Stomp, type IMessage, type messageCallbackType } from '@stomp/stompjs'
+import type { Conversation, MessageRequest, User, UserStatusRequest } from '@/types'
+import { Stomp, type IMessage, type messageCallbackType, CompatClient } from '@stomp/stompjs'
 
 export interface ApiMethods {
   // Define the methods you want to expose for API calls
@@ -12,6 +12,7 @@ export interface ApiMethods {
   sendMessage(message: MessageRequest): void
   updateUser: (user: User) => Promise<User>
   updateUserImage: (formData: FormData) => Promise<Object>
+  updateUserStatus: (status: UserStatusRequest) => void
   onConnected: (callback: (message: IMessage) => void) => void
   onPublicMessage: (callback: (message: IMessage) => void) => void
   onDirectMessage: (callback: (message: IMessage) => void) => void
@@ -20,6 +21,7 @@ export interface ApiMethods {
 declare global {
   export interface Window {
     api: ApiMethods
+    sc: CompatClient
   }
 }
 
@@ -167,6 +169,10 @@ export function useAPI(url: string, username: string, token: string): { api: Api
         return
       }
       stompCallbacks[`/user/${username}/private`] = callback
+    },
+
+    updateUserStatus: (status: UserStatusRequest) => {
+      stompClient.send(`/topic/public`, {}, JSON.stringify({ status }))
     }
   }
 
@@ -178,6 +184,7 @@ export function useAPI(url: string, username: string, token: string): { api: Api
   })
 
   window.api = api
+  window.sc = stompClient
 
   return { api }
 }

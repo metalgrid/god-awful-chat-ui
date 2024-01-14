@@ -61,6 +61,7 @@ router.beforeEach(
             next({ name: 'login' })
           })
       }
+      next({ name: 'login' })
       // Redirect to login if not authenticated
     } else {
       // Continue navigation

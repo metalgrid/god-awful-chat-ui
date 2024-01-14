@@ -55,6 +55,12 @@ interface MessageRequest {
   receiverName: string | null
 }
 
+interface UserStatusRequest {
+  username: string
+  userId: number
+  status: 'online' | 'dnd' | 'away' | 'offline'
+}
+
 export type {
   Role,
   Authority,
@@ -64,5 +70,6 @@ export type {
   Conversation,
   MessageRequest,
   LoginRequest,
-  RegistrationRequest
+  RegistrationRequest,
+  UserStatusRequest
 }

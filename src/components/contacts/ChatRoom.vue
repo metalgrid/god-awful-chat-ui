@@ -27,22 +27,22 @@
   </li>
 </template>
 <script setup lang="ts">
-import type { Conversation } from "@/types";
-import { computed } from "vue";
+import type { Conversation } from '@/types'
+import { computed } from 'vue'
 
-const emit = defineEmits(["click"]);
+const emit = defineEmits(['click'])
 
 const statusText = computed(() => {
-  if (props.conversation.messages.length === 0) return "";
-  const mlen = props.conversation.messages.length - 1;
-  return props.conversation.messages[mlen].message;
-});
+  if (props.conversation.messages.length === 0) return ''
+  const mlen = props.conversation.messages.length - 1
+  return props.conversation.messages[mlen].message
+})
 
 const props = defineProps<{
-  conversation: Conversation;
-  active: boolean;
-  badge: number;
-}>();
+  conversation: Conversation
+  active: boolean
+  badge: number
+}>()
 </script>
 <style scoped>
 .default {
