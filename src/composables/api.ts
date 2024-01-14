@@ -26,7 +26,13 @@ declare global {
 }
 
 export function useAPI(url: string, username: string, token: string): { api: ApiMethods } {
-  const urlObj = new URL(url)
+  let urlObj: URL
+  try {
+    urlObj = new URL(url)
+  } catch (e: any) {
+    urlObj = new URL(window.location.href)
+  }
+
   const stompClient = Stomp.client(`ws://${urlObj.host}/ws-native`)
   stompClient.debug = () => {}
   let connected = false
