@@ -155,7 +155,7 @@ const status = computed(() => {
         <h2 class="text-xs font-bold">
           {{ props.user?.fullName || props.user.username }}
         </h2>
-        <div class="text-xs flex flex-row">
+        <div v-if="props.statusText" class="text-xs flex flex-row">
           <!-- <fa-icon :icon="['fas', 'check-double']" class="text-current mr-1" /> -->
           <span class="text-current"> {{ formatDateTime(props.statusText.timeStamp) }} </span>
         </div>
