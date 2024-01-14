@@ -307,7 +307,8 @@ const sendMessage = async (message: MessageRequest) => {
   if (!activeConvo.value) {
     return;
   }
-
+  console.log("sending message");
+  
   api.sendMessage(message);
 };
 

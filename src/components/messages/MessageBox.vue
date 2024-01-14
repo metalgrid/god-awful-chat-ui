@@ -21,12 +21,12 @@
       />
       <div v-if="media" class="grid grid-cols-4 gap-2 mt-2">
         <div class="relative" v-for="item in media" :key="item.id">
-          <fa-icon class="absolute bottom-0 right-0 w-4 h-4 bg-gray-50 rounded-full translate-x-2 translate-y-2" @click.prevent="media.splice(media.indexOf(item), 1)" :icon="['fas', 'times']" />
-          <img
-            v-if="item.type === 'image'"
-            :src="item.content"
-            class="rounded-md w-48"
+          <fa-icon
+            class="absolute bottom-0 right-0 w-4 h-4 bg-gray-50 rounded-full translate-x-2 translate-y-2"
+            @click.prevent="media.splice(media.indexOf(item), 1)"
+            :icon="['fas', 'times']"
           />
+          <img v-if="item.type === 'image'" :src="item.content" class="rounded-md w-48" />
         </div>
       </div>
     </div>
@@ -68,9 +68,21 @@ const emit = defineEmits<{
 }>()
 
 const sendMessage = () => {
+  if (!convo) return
   if (text.value.trim().length === 0) return
   if (text.value.trim().length > 1000) return
-  if (!convo) return
+
+  while (media.value?.length > 0) {
+    const item = media.value.shift()
+    console.log("media message", item?.type);
+    
+    emit('message', {
+      message: item!.content!,
+      senderName: auth!.user.username,
+      conversationId: convo.value.id,
+      receiverName: convo.value.public ? null : convo.value.username,
+    })
+  }
 
   emit('message', {
     message: text.value.trim(),
@@ -78,6 +90,8 @@ const sendMessage = () => {
     conversationId: convo.value.id,
     receiverName: convo.value.public ? null : convo.value.username
   })
+
+
   text.value = ''
 }
 
