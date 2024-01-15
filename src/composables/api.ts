@@ -1,5 +1,6 @@
 import type { Conversation, MessageRequest, User, UserStatusRequest } from '@/types'
 import { Stomp, type IMessage, type messageCallbackType, CompatClient } from '@stomp/stompjs'
+import { inject, type Ref } from 'vue'
 
 export interface ApiMethods {
   // Define the methods you want to expose for API calls
@@ -26,7 +27,11 @@ declare global {
   }
 }
 
-export function useAPI(url: string, username: string, token: string): { api: ApiMethods } {
+export function useAPI(
+  url: string,
+  username: string,
+  token: string
+): { api: ApiMethods; stompClient: CompatClient } {
   let urlObj: URL
   try {
     urlObj = new URL(url)
@@ -35,7 +40,7 @@ export function useAPI(url: string, username: string, token: string): { api: Api
   }
 
   const stompClient = Stomp.client(`ws://${urlObj.host}/ws-native`)
-  stompClient.debug = () => {}
+  // stompClient.debug = () => {}
   let connected = false
 
   const stompCallbacks: Record<string, messageCallbackType> = {}
@@ -197,5 +202,5 @@ export function useAPI(url: string, username: string, token: string): { api: Api
   window.api = api
   window.sc = stompClient
 
-  return { api }
+  return { api, stompClient }
 }

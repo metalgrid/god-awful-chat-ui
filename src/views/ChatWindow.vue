@@ -314,7 +314,7 @@ const sendMessage = async (message: MessageRequest) => {
     return;
   }
   console.log("sending message");
-  
+
   api.sendMessage(message);
 };
 
