@@ -39,11 +39,13 @@ const incomingCall: Ref<Invite | null> = ref(null);
 let callAPI: CallAPI;
 
 const accept = async () => {
-  const {offer} = incomingCall.value!;
+  const {callUUID, offer} = incomingCall.value!;
   const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
   await pc.setRemoteDescription(offer);
   const answer = await pc.createAnswer();
   await pc.setLocalDescription(answer);
+
+  await callAPI.accept(callUUID, answer);
 }
 
 const initCallAPI = async () => {

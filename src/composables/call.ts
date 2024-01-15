@@ -20,6 +20,7 @@ export enum CallEvent {
 export interface CallAPI {
   on: (event: CallEvent, callback: Function) => void
   call: (username: string) => void
+  accept: (callUUID: string, answer: RTCSessionDescriptionInit) => void
 }
 
 const callbacks: Map<string, Function[]> = new Map()
@@ -70,8 +71,11 @@ export async function useCall(me: User, stompClient: CompatClient): Promise<Call
           caller: me,
           offer: offer
         }
+        stompClient.subscribe(`/user/${username}/${callUUID}`, async (message) => {})
         stompClient.send(`/user/${username}/${CallEvent.INCOMING_CALL}`, {}, JSON.stringify(invite))
-      }
+      },
+
+      accept: async (callUUID: string, answer: RTCSessionDescriptionInit) => {}
     }
     resolve(api)
   })
