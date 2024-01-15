@@ -1,6 +1,5 @@
 import type { Conversation, MessageRequest, User, UserStatusRequest } from '@/types'
 import { Stomp, type IMessage, type messageCallbackType, CompatClient } from '@stomp/stompjs'
-import { inject, type Ref } from 'vue'
 
 export interface ApiMethods {
   // Define the methods you want to expose for API calls
