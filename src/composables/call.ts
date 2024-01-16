@@ -92,7 +92,7 @@ export async function useCall(me: User, stompClient: CompatClient): Promise<Call
           console.log('[caller] Got local ICE candidate', event.candidate)
         }
 
-        const streams = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+        const streams = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         streams.getTracks().forEach((track) => pc.addTrack(track, streams))
         const offer = await pc.createOffer()
         pc.setLocalDescription(offer)
@@ -171,9 +171,14 @@ export async function useCall(me: User, stompClient: CompatClient): Promise<Call
         }
         pc.ontrack = (event) => {
           console.log('Got remote track', event)
+          const video = document.querySelector('#remote-video') as HTMLVideoElement
+          video.srcObject = event.streams[0]
+          video.onloadedmetadata = () => {
+            video.play()
+          }
         }
         pc.setRemoteDescription(new RTCSessionDescription(invite.offer))
-        const streams = await navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+        const streams = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         streams.getTracks().forEach((track) => pc.addTrack(track, streams))
         const sdp = await pc.createAnswer()
         pc.setLocalDescription(sdp)

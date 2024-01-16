@@ -1,17 +1,40 @@
 <template>
-  <div class="flex flex-col items-center">
-    <div class="w-full text-center">Logged in as: {{ auth?.user.username }}</div>
-    <div class="w-full" @click="callAPI.call(user.username)" v-for="user in users" :key="user.id">
+  <div class="flex flex-col space-y-2 items-center">
+    <div class="text-center font-bold text-2xl text-white p-2 bg-blue-400 rounded">Logged in as: {{ auth?.user.username }}</div>
+    <div
+      class="w-full"
+      @click="callAPI.call(user.username)"
+      v-for="user in users"
+      :key="user.id"
+    >
       <p class="p-2 bg-gray-300 rounded">
-        <fa-icon :icon="['fas', 'user']" class="mr-2 text-indigo-700"></fa-icon>{{ user.username }}
+        <fa-icon :icon="['fas', 'user']" class="mr-2 text-indigo-700"></fa-icon
+        >{{ user.username }}
       </p>
     </div>
     <div v-if="incomingCall" class="p-2 text-center">
       <p>Call from {{ incomingCall.caller.fullName || incomingCall.caller.username }}</p>
       <div class="flex flex-row space-x-2">
-        <button class="p-2 bg-green-400 text-white rounded" @click="accept">Answer</button>
+        <button class="p-2 bg-green-400 text-white rounded" @click="accept">
+          Answer
+        </button>
         <button class="p-2 bg-red-400 text-white rounded">Decline</button>
       </div>
+    </div>
+    <div class="w-full flex flex-row space-x-2">
+      <video
+        class="w-1/2 h-96 bg-gray-300 rounded-xl border-2 border-blue-500"
+        ref="localVideo"
+        id="local-video"
+        autoplay
+        muted
+      ></video>
+      <video
+        class="w-1/2 h-96 bg-gray-300 rounded-xl border-2 border-blue-500"
+        ref="remoteVideo"
+        id="remote-video"
+        autoplay
+      ></video>
     </div>
   </div>
 </template>
@@ -24,6 +47,9 @@ import type { Invite, CallAPI } from '@/composables/call'
 // Router ensures auth is defined
 const auth = unref(inject<Ref<Auth>>('auth'))!
 const users = ref<User[]>()
+
+const localVideo: Ref<HTMLVideoElement | null> = ref(null)
+const remoteVideo: Ref<HTMLVideoElement | null> = ref(null)
 
 const incomingCall: Ref<Invite | null> = ref(null)
 
