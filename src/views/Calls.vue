@@ -15,7 +15,7 @@
     <div v-if="incomingCall" class="p-2 text-center">
       <p>Call from {{ incomingCall.caller.fullName || incomingCall.caller.username }}</p>
       <div class="flex flex-row space-x-2">
-        <button class="p-2 bg-green-400 text-white rounded">Answer</button>
+        <button class="p-2 bg-green-400 text-white rounded" @click="accept">Answer</button>
         <button class="p-2 bg-red-400 text-white rounded">Decline</button>
       </div>
     </div>
@@ -39,13 +39,10 @@ const incomingCall: Ref<Invite | null> = ref(null);
 let callAPI: CallAPI;
 
 const accept = async () => {
-  const {callUUID, offer} = incomingCall.value!;
-  const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
-  await pc.setRemoteDescription(offer);
-  const answer = await pc.createAnswer();
-  await pc.setLocalDescription(answer);
+  if (incomingCall.value === null) throw new Error("No incoming call");
+  const invite = incomingCall.value;
 
-  await callAPI.accept(callUUID, answer);
+  await callAPI.accept(invite);
 }
 
 const initCallAPI = async () => {

@@ -39,7 +39,7 @@ export function useAPI(
   }
 
   const stompClient = Stomp.client(`ws://${urlObj.host}/ws-native`)
-  // stompClient.debug = () => {}
+  stompClient.debug = () => {}
   let connected = false
 
   const stompCallbacks: Record<string, messageCallbackType> = {}
