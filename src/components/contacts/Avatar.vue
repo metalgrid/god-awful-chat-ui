@@ -1,10 +1,10 @@
 <script setup lang="tsx">
-import type { User } from '@/types';
-import { computed } from 'vue';
+import type { User } from '@/types'
+import { computed } from 'vue'
 
 const props = defineProps<{
-  user: User;
-}>();
+  user: User
+}>()
 
 function shash(s: String) {
   let char, i
@@ -78,5 +78,5 @@ const avatar = computed(() => {
 })
 </script>
 <template>
-    <avatar></avatar>
+  <avatar></avatar>
 </template>

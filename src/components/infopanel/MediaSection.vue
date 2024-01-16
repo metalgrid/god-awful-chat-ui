@@ -3,25 +3,13 @@
     <ul
       class="flex flex-row space-x-2 justify-between items-center text-gray-500 bg-gray-100 rounded-lg p-1"
     >
-      <li
-        @click="active = 'media'"
-        class="switch"
-        :class="active === 'media' ? 'active' : ''"
-      >
+      <li @click="active = 'media'" class="switch" :class="active === 'media' ? 'active' : ''">
         Media
       </li>
-      <li
-        @click="active = 'links'"
-        class="switch"
-        :class="active === 'links' ? 'active' : ''"
-      >
+      <li @click="active = 'links'" class="switch" :class="active === 'links' ? 'active' : ''">
         Links
       </li>
-      <li
-        @click="active = 'files'"
-        class="switch"
-        :class="active === 'files' ? 'active' : ''"
-      >
+      <li @click="active = 'files'" class="switch" :class="active === 'files' ? 'active' : ''">
         Files
       </li>
     </ul>
@@ -30,14 +18,10 @@
         <img
           class="rounded-md w-48"
           :src="image.content"
-          :alt="`Image from ${
-            image.user?.fullName ? image.user.fullName : image.user.username
-          }`"
+          :alt="`Image from ${image.user?.fullName ? image.user.fullName : image.user.username}`"
         />
         <!-- show the user's avatar as a badge on the image -->
-        <avatar
-          class="absolute bottom-0 right-0 w-8 h-8"
-          :user="image.user"></avatar>
+        <avatar class="absolute bottom-0 right-0 w-8 h-8" :user="image.user"></avatar>
       </li>
     </ul>
     <ul v-show="active === 'links'" class="flex flex-col gap-2 my-3">
@@ -69,15 +53,15 @@
 }
 </style>
 <script setup lang="ts">
-import { ref } from "vue";
-import type { MediaMessage } from "@/types";
-import Avatar from "../contacts/Avatar.vue";
-import { formatDateTime } from "@/composables/utils";
+import { ref } from 'vue'
+import type { MediaMessage } from '@/types'
+import Avatar from '../contacts/Avatar.vue'
+import { formatDateTime } from '@/composables/utils'
 
-const active = ref("");
+const active = ref('')
 const props = defineProps<{
-  links: MediaMessage[];
-  files: MediaMessage[];
-  media: MediaMessage[];
-}>();
+  links: MediaMessage[]
+  files: MediaMessage[]
+  media: MediaMessage[]
+}>()
 </script>

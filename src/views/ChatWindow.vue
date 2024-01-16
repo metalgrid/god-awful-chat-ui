@@ -12,9 +12,7 @@
             <!-- [+] navigation -->
             <div class="p-1 flex flex-col justify-between items-center">
               <div class="">
-                <div
-                  class="p-1 flex justify-center items-center text-gray-500 cursor-pointer"
-                >
+                <div class="p-1 flex justify-center items-center text-gray-500 cursor-pointer">
                   <button
                     class="flex flex-col justify-center items-center w-full p-1 rounded-lg hover:bg-gray-50 hover:bg-opacity-30 focus:outline-none focus:ring"
                     aria-label="Hamburger menu"
@@ -23,9 +21,7 @@
                   </button>
                 </div>
                 <ul class="">
-                  <nav-button icon="comments" :badge="allUnreads" active
-                    >All chats</nav-button
-                  >
+                  <nav-button icon="comments" :badge="allUnreads" active>All chats</nav-button>
                   <nav-button icon="comment-dots">Unread</nav-button>
                   <nav-button icon="address-card">Personal</nav-button>
                   <nav-button icon="sliders">Edit</nav-button>
@@ -51,7 +47,7 @@
                 <user-card
                   @click="
                     () => {
-                      openChat(user);
+                      openChat(user)
                     }
                   "
                   v-for="user in users"
@@ -142,12 +138,7 @@
         <message-box @message="sendMessage"></message-box>
       </div>
       <!-- Right section -->
-      <info-panel
-        :links="links"
-        :files="files"
-        :media="media"
-        :users="users"
-      ></info-panel>
+      <info-panel :links="links" :files="files" :media="media" :users="users"></info-panel>
     </section>
   </div>
   <profile
@@ -159,213 +150,213 @@
   ></profile>
 </template>
 <script setup lang="ts">
-import NavButton from "@/components/sidenav/NavButton.vue";
-import SearchBox from "@/components/contacts/SearchBox.vue";
-import ChatRoom from "@/components/contacts/ChatRoom.vue";
-import UserCard from "@/components/contacts/UserCard.vue";
-import Message from "@/components/messages/Message.vue";
-import MessageBox from "@/components/messages/MessageBox.vue";
-import Profile from "@/components/profile/Profile.vue";
-import InfoPanel from "@/components/infopanel/InfoPanel.vue";
-import CallWindow from "@/components/calls/CallWindow.vue";
-import { useAPI } from "@/composables/api";
+import NavButton from '@/components/sidenav/NavButton.vue'
+import SearchBox from '@/components/contacts/SearchBox.vue'
+import ChatRoom from '@/components/contacts/ChatRoom.vue'
+import UserCard from '@/components/contacts/UserCard.vue'
+import Message from '@/components/messages/Message.vue'
+import MessageBox from '@/components/messages/MessageBox.vue'
+import Profile from '@/components/profile/Profile.vue'
+import InfoPanel from '@/components/infopanel/InfoPanel.vue'
+import CallWindow from '@/components/calls/CallWindow.vue'
+import { useAPI } from '@/composables/api'
 
-import { inject, ref, unref, provide, computed, onMounted, nextTick } from "vue";
+import { inject, ref, unref, provide, computed, onMounted, nextTick } from 'vue'
 import type {
   Auth,
   Conversation,
   MessageRequest,
   User,
   Message as ChatMessage,
-  MediaMessage,
-} from "@/types";
-import type { IMessage } from "@stomp/stompjs";
-const search = ref("");
-const users = ref<User[]>([]);
-const publicChats = ref<Conversation[]>([]);
-const editProfile = ref(false);
+  MediaMessage
+} from '@/types'
+import type { IMessage } from '@stomp/stompjs'
+const search = ref('')
+const users = ref<User[]>([])
+const publicChats = ref<Conversation[]>([])
+const editProfile = ref(false)
 
-const msgbox = ref<HTMLDivElement | null>(null);
+const msgbox = ref<HTMLDivElement | null>(null)
 
-const auth: Auth = unref(inject("auth", {} as Auth));
+const auth: Auth = unref(inject('auth', {} as Auth))
 
-const unreads = ref<Record<string, number>>({});
+const unreads = ref<Record<string, number>>({})
 const allUnreads = computed(() => {
-  return Object.values(unreads.value).reduce((a, b) => a + b, 0);
-});
+  return Object.values(unreads.value).reduce((a, b) => a + b, 0)
+})
 
-const { api } = useAPI(import.meta.env.VITE_API_URL, auth.user.username, auth.token);
-const conversations = ref<Record<string, Conversation>>({});
-const activeConvo = ref<(Conversation & User) | null>(null);
+const { api } = useAPI(import.meta.env.VITE_API_URL, auth.user.username, auth.token)
+const conversations = ref<Record<string, Conversation>>({})
+const activeConvo = ref<(Conversation & User) | null>(null)
 
-provide("activeConvo", activeConvo);
+provide('activeConvo', activeConvo)
 
 // [+] WS Subscriptions
 api.onConnected((message: IMessage) => {
   switch (message.body) {
-    case "connected":
-    case "disconnected":
+    case 'connected':
+    case 'disconnected':
       api.getUsers().then((res) => {
-        users.value = res;
-      });
-      break;
+        users.value = res
+      })
+      break
   }
-});
+})
 
 api.onDirectMessage((message: IMessage) => {
-  const msg = JSON.parse(message.body);
+  const msg = JSON.parse(message.body)
   if (!unreads.value[msg.username]) {
-    unreads.value[msg.username] = 0;
+    unreads.value[msg.username] = 0
   }
 
   if (![activeConvo.value?.username, auth.user.username].includes(msg.username)) {
-    unreads.value[msg.username] += 1;
+    unreads.value[msg.username] += 1
   }
 
   if (activeConvo.value?.id === msg.conversationId) {
     api.getConversationById(msg.conversationId).then((res) => {
-      activeConvo.value!.messages = res.messages;
-      conversations.value[msg.username] = res;
-      links.value = [];
+      activeConvo.value!.messages = res.messages
+      conversations.value[msg.username] = res
+      links.value = []
       nextTick(() => {
-        [links.value, media.value, files.value] = [[], [], []];
-        msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
-      });
-    });
+        ;[links.value, media.value, files.value] = [[], [], []]
+        msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight)
+      })
+    })
   }
-});
+})
 
 api.onPublicMessage((message: IMessage) => {
-  const msg = JSON.parse(message.body);
+  const msg = JSON.parse(message.body)
   if (activeConvo.value?.id == msg.conversationId) {
     api.getConversationById(msg.conversationId).then((res) => {
-      activeConvo.value!.messages = res.messages;
+      activeConvo.value!.messages = res.messages
       nextTick(() => {
-        [links.value, media.value, files.value] = [[], [], []];
-        msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
-      });
-    });
+        ;[links.value, media.value, files.value] = [[], [], []]
+        msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight)
+      })
+    })
   } else {
     if (!unreads.value[msg.conversationId]) {
-      unreads.value[msg.conversationId] = 0;
+      unreads.value[msg.conversationId] = 0
     }
 
-    unreads.value[msg.conversationId] += 1;
+    unreads.value[msg.conversationId] += 1
   }
-});
+})
 
 // [-] WS Subscriptions
 
 api.getUsers().then((res) => {
-  users.value = res;
-});
+  users.value = res
+})
 
 api.getDirectMessages().then((res) => {
   res.forEach((user) => {
     api.getConversation(user.username).then((convo) => {
-      conversations.value[user.username] = convo;
-      unreads.value[user.username] = 0;
-    });
-  });
-});
+      conversations.value[user.username] = convo
+      unreads.value[user.username] = 0
+    })
+  })
+})
 
 api.getPublicChats().then((res) => {
   res.forEach((convo) => {
     if (convo.public) {
-      publicChats.value.push(convo);
-      unreads.value[convo.id] = 0;
-      conversations.value[convo.username] = convo;
-      return;
+      publicChats.value.push(convo)
+      unreads.value[convo.id] = 0
+      conversations.value[convo.username] = convo
+      return
     }
     api.getConversation(convo.username).then((convo) => {
-      conversations.value[convo.username] = convo;
-    });
-  });
-});
+      conversations.value[convo.username] = convo
+    })
+  })
+})
 
 const openConvo = async (convo: Conversation) => {
-  const update = await api.getConversationById(convo.id);
-  activeConvo.value = { ...auth.user, ...update };
-  unreads.value[convo.id] = 0;
+  const update = await api.getConversationById(convo.id)
+  activeConvo.value = { ...auth.user, ...update }
+  unreads.value[convo.id] = 0
 
-  await nextTick();
-  [links.value, media.value, files.value] = [[], [], []];
-  msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
-};
+  await nextTick()
+  ;[links.value, media.value, files.value] = [[], [], []]
+  msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight)
+}
 
 const openChat = async (user: User) => {
-  const res = await api.getConversation(user.username);
+  const res = await api.getConversation(user.username)
   if (res?.exists) {
-    conversations.value[user.username] = res;
+    conversations.value[user.username] = res
   } else {
-    const convo = await api.createConversation(user.username);
-    conversations.value[user.username] = convo;
+    const convo = await api.createConversation(user.username)
+    conversations.value[user.username] = convo
   }
-  activeConvo.value = { ...user, ...conversations.value[user.username] };
-  unreads.value[user.username] = 0;
+  activeConvo.value = { ...user, ...conversations.value[user.username] }
+  unreads.value[user.username] = 0
 
-  await nextTick();
-  [links.value, media.value, files.value] = [[], [], []];
-  msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight);
-};
+  await nextTick()
+  ;[links.value, media.value, files.value] = [[], [], []]
+  msgbox.value?.scrollTo(msgbox.value?.scrollTop, msgbox.value.scrollHeight)
+}
 
 const sendMessage = async (message: MessageRequest) => {
   if (!activeConvo.value) {
-    return;
+    return
   }
-  console.log("sending message");
+  console.log('sending message')
 
-  api.sendMessage(message);
-};
+  api.sendMessage(message)
+}
 
 const updateUser = async (user: User) => {
-  const res = await api.updateUser(user);
-  auth.user = res;
-  editProfile.value = false;
-};
+  const res = await api.updateUser(user)
+  auth.user = res
+  editProfile.value = false
+}
 
 const updateUserImage = async (fd: FormData) => {
-  await api.updateUserImage(fd);
+  await api.updateUserImage(fd)
   api.getUsers().then((res) => {
-    users.value = res;
-  });
-};
+    users.value = res
+  })
+}
 
 const getStatusText = (username: string): ChatMessage | undefined => {
   if (!conversations.value[username]?.messages) {
-    return undefined;
+    return undefined
   }
 
   if (conversations.value[username].messages?.length === 0) {
-    return undefined;
+    return undefined
   }
 
-  const lastIdx = conversations.value[username].messages.length - 1;
-  const msg = conversations.value[username]?.messages?.[lastIdx];
-  if (msg.message.startsWith("data:image/")) {
+  const lastIdx = conversations.value[username].messages.length - 1
+  const msg = conversations.value[username]?.messages?.[lastIdx]
+  if (msg.message.startsWith('data:image/')) {
     return {
       ...msg,
-      message: "Sent an image",
-    };
+      message: 'Sent an image'
+    }
   }
   if (msg.message.length > 100) {
     return {
       ...msg,
-      message: msg.message.substring(0, 100) + "...",
-    };
+      message: msg.message.substring(0, 100) + '...'
+    }
   }
-};
+}
 
 onMounted(() => {
   if (msgbox.value) {
-    msgbox.value.scrollTop = msgbox.value.scrollHeight;
+    msgbox.value.scrollTop = msgbox.value.scrollHeight
   }
-});
+})
 
 // Stuff for the info panel
-const links = ref<MediaMessage[]>([]);
-const media = ref<MediaMessage[]>([]);
-const files = ref<MediaMessage[]>([]);
+const links = ref<MediaMessage[]>([])
+const media = ref<MediaMessage[]>([])
+const files = ref<MediaMessage[]>([])
 </script>
 <style>
 section {

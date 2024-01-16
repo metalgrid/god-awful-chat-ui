@@ -5,7 +5,7 @@
 </template>
 <style scoped>
 .localVideo {
-    @apply w-full h-full rounded-xl border-2 border-blue-500;
+  @apply w-full h-full rounded-xl border-2 border-blue-500;
 }
 </style>
 <script setup lang="ts">

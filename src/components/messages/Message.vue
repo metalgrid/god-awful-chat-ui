@@ -12,15 +12,15 @@
   </div>
 </template>
 <script setup lang="tsx">
-import { computed } from "vue";
-import Avatar from "../contacts/Avatar.vue";
-import type { MediaMessage, Message } from "@/types";
+import { computed } from 'vue'
+import Avatar from '../contacts/Avatar.vue'
+import type { MediaMessage, Message } from '@/types'
 
 const emit = defineEmits<{
-  "media:link": [message: MediaMessage],
-  "media:image": [message: MediaMessage],
-  "media:file": [message: MediaMessage],
-}>();
+  'media:link': [message: MediaMessage]
+  'media:image': [message: MediaMessage]
+  'media:file': [message: MediaMessage]
+}>()
 
 // const parseMessage = (message: Message) => {
 //   // Check if the message is an image
@@ -44,19 +44,18 @@ const emit = defineEmits<{
 // };
 
 const messageBody = computed(() => {
-
-  if (props.message.message.startsWith("data:image/")) {
-    emit("media:image", {
+  if (props.message.message.startsWith('data:image/')) {
+    emit('media:image', {
       id: props.message.id,
-      type: "image",
+      type: 'image',
       user: props.message.user,
       timestamp: props.message.timeStamp,
-      content: props.message.message,
-    });
-    return <img src={props.message.message} class="w-64" />;
+      content: props.message.message
+    })
+    return <img src={props.message.message} class="w-64" />
   }
 
-  const [linksFound, text] = renderLinks(props.message);
+  const [linksFound, text] = renderLinks(props.message)
   if (linksFound) {
     // emit('media:link', {
     //   timestamp: new Date(),
@@ -64,36 +63,36 @@ const messageBody = computed(() => {
     //   highlight: text,
     //   sender: props.message.user
     // })
-    return <p class="pb-3 pr-3 text-sm" innerHTML={text}></p>;
+    return <p class="pb-3 pr-3 text-sm" innerHTML={text}></p>
   }
-  return <p class="pb-3 pr-3 text-sm">{text}</p>;
-});
+  return <p class="pb-3 pr-3 text-sm">{text}</p>
+})
 
 const renderLinks = (message: Message): [number | undefined, string] => {
   // Use a regular expression to match and replace links in the text
-  const linkRegex = /(https?:\/\/[^\s]+)/g;
-  let text = String(message.message);
+  const linkRegex = /(https?:\/\/[^\s]+)/g
+  let text = String(message.message)
 
-  const links = text.match(linkRegex);
+  const links = text.match(linkRegex)
 
   links?.forEach((link) => {
-    const ahref = `<a class="font-medium text-blue-600 dark:text-blue-700 underline" href="${link}" target="_blank">${link}</a>`;
-    emit("media:link", {
+    const ahref = `<a class="font-medium text-blue-600 dark:text-blue-700 underline" href="${link}" target="_blank">${link}</a>`
+    emit('media:link', {
       id: message.id,
-      type: "link",
+      type: 'link',
       user: message.user,
       timestamp: message.timeStamp,
-      content: ahref,
-    });
-    text = text.replace(link, ahref);
-  });
+      content: ahref
+    })
+    text = text.replace(link, ahref)
+  })
 
-  return [links?.length, text];
-};
+  return [links?.length, text]
+}
 
 function formatDateTime(inputDateTime: string) {
-  const messageDate = new Date(inputDateTime);
-  const now = new Date();
+  const messageDate = new Date(inputDateTime)
+  const now = new Date()
 
   // If the message is from today
   if (
@@ -101,43 +100,35 @@ function formatDateTime(inputDateTime: string) {
     messageDate.getMonth() === now.getMonth() &&
     messageDate.getFullYear() === now.getFullYear()
   ) {
-    return messageDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
 
   // If the message is from the last few days
-  const timeDifference = now.getTime() - messageDate.getTime();
-  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  const timeDifference = now.getTime() - messageDate.getTime()
+  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
 
   if (daysDifference < 7) {
-    const weekdays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const dayName = weekdays[messageDate.getDay()];
+    const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const dayName = weekdays[messageDate.getDay()]
     return `${dayName}, ${messageDate.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}`;
+      hour: '2-digit',
+      minute: '2-digit'
+    })}`
   }
 
   // If the message is older than a week
-  return `${messageDate.toLocaleString("default", {
-    month: "long",
+  return `${messageDate.toLocaleString('default', {
+    month: 'long'
   })} ${messageDate.getDate()}, ${messageDate.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  })}`;
+    hour: '2-digit',
+    minute: '2-digit'
+  })}`
 }
 
 const props = defineProps<{
-  message: Message;
-  local: Boolean;
-}>();
+  message: Message
+  local: Boolean
+}>()
 </script>
 <style scoped>
 .local {

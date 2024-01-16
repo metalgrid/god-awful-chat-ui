@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import type { User, Conversation, MediaMessage } from "@/types";
-import Avatar from "@/components/contacts/Avatar.vue";
-import MediaSection from "./MediaSection.vue";
-import { inject } from "vue";
-const activeConvo = inject("activeConvo") as User & Conversation;
+import type { User, Conversation, MediaMessage } from '@/types'
+import Avatar from '@/components/contacts/Avatar.vue'
+import MediaSection from './MediaSection.vue'
+import { inject } from 'vue'
+const activeConvo = inject('activeConvo') as User & Conversation
 const props = defineProps<{
-  users: User[];
-  links: MediaMessage[];
-  files: MediaMessage[];
-  media: MediaMessage[];
-}>();
+  users: User[]
+  links: MediaMessage[]
+  files: MediaMessage[]
+  media: MediaMessage[]
+}>()
 
 const getUser = (username: string) => {
-  if (!props.users) return null;
-  if (!username) return null;
-  return props.users.find((user) => user.username === username);
-};
+  if (!props.users) return null
+  if (!username) return null
+  return props.users.find((user) => user.username === username)
+}
 </script>
 <template>
   <div class="hidden w-2/6 xl:block bg-white rounded-r-md p-5 overflow-y-auto">
@@ -32,10 +32,7 @@ const getUser = (username: string) => {
       </button>
     </header>
     <main>
-      <div
-        v-if="activeConvo?.username"
-        class="my-4 flex flex-col items-center justify-center"
-      >
+      <div v-if="activeConvo?.username" class="my-4 flex flex-col items-center justify-center">
         <avatar class="w-24 h-24" :user="getUser(activeConvo?.username)!"></avatar>
         <h2 class="text-center text-xl font-semibold">
           {{ activeConvo?.fullName || activeConvo?.username }}

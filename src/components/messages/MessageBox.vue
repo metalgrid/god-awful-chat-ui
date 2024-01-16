@@ -72,13 +72,13 @@ const sendMessage = () => {
 
   while (media.value?.length > 0) {
     const item = media.value.shift()
-    console.log("media message", item?.type, item?.content);
-    
+    console.log('media message', item?.type, item?.content)
+
     emit('message', {
       message: item!.content!,
       senderName: auth!.user.username,
       conversationId: convo.value.id,
-      receiverName: convo.value.public ? null : convo.value.username,
+      receiverName: convo.value.public ? null : convo.value.username
     })
   }
 
@@ -92,7 +92,6 @@ const sendMessage = () => {
     receiverName: convo.value.public ? null : convo.value.username
   })
 
-
   text.value = ''
 }
 
@@ -103,7 +102,11 @@ const handleDrop = (ev: DragEvent) => {
     if (file.type.indexOf('image') === -1) continue
     const reader = new FileReader()
     reader.onload = function () {
-      media.value.push({id: media.value.length, content: reader.result?.toString(), type: 'image'})
+      media.value.push({
+        id: media.value.length,
+        content: reader.result?.toString(),
+        type: 'image'
+      })
     }
     reader.readAsDataURL(file)
   }
@@ -113,23 +116,27 @@ const handlePaste = (ev: ClipboardEvent) => {
   const items = ev.clipboardData?.items || []
 
   for (const item of items) {
-    const type = item.type;
-    if (type.indexOf("image") !== -1) {
-      const blob = item.getAsFile();
-      const reader = new FileReader();
+    const type = item.type
+    if (type.indexOf('image') !== -1) {
+      const blob = item.getAsFile()
+      const reader = new FileReader()
       reader.onload = function () {
-        media.value.push({id: media.value.length, content: reader.result?.toString(), type: 'image'});
+        media.value.push({
+          id: media.value.length,
+          content: reader.result?.toString(),
+          type: 'image'
+        })
         // messages.value.push({
         //   id: messages.value.length + 1,
         //   text: img,
         //   type: "image",
         //   sender: user.id,
         // });
-      };
+      }
       if (blob) {
-        reader.readAsDataURL(blob);
+        reader.readAsDataURL(blob)
       }
     }
   }
-};
+}
 </script>

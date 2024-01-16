@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { formatDateTime } from '@/composables/utils';
+import { formatDateTime } from '@/composables/utils'
 import { type Message, type User } from '@/types'
 import { computed, type PropType } from 'vue'
 
